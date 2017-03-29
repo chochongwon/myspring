@@ -31,6 +31,9 @@
     	<if test="idx != idx">
          NUM = #{idx}
     	</if> 
+    	<if test="crea_id!=null and crea_id.equalsIgnoreCase('N')">
+    		CREA_ID = 'N'
+    	</if>
 	ORDER BY IDX DESC 
 	</select> 	
 	
