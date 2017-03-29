@@ -1,0 +1,7 @@
+<%@ page pageEncoding="utf-8"%>
+<!--
+	화면 하단에 포함될 리소스가 선언된 파일이다.
+	여기에는 화면 하단에 공통적으로 사용할 태그나 조금 늦게 호출될 자바스크립트 등이 포함된다. 
+ -->
+ <!-- common.js 에 있는 submit 기능을 위한 숨김 폼을 만든다. -->
+<form id="commonForm" name="commonForm"></form>

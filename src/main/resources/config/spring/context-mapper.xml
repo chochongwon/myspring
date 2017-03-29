@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+	
+	<!-- 지정된 베이스 패키지에서 DAO(Mapper)를 검색하여 등록한다. -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="myspring.app.dao" />
+	</bean>
+	
+     <!-- MyBatis SqlSession -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- MyBatis 설정 파일의 위치를 지정한다. -->
+		<property name="configLocation" value="classpath:config/spring/mybatis-config.xml" />
+		<!-- SQL 파일의 위치를 지정한다. -->
+		<property name="mapperLocations" >
+			<list>
+				<value>classpath:mapper/*_SQL.xml</value>
+				<value>classpath:mapper/**/*_SQL.xml</value>
+			</list>
+		</property>
+	</bean>	
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
+        <constructor-arg index="0" ref="sqlSession"/>
+		<!-- <constructor-arg name="sqlSessionFactory" ref="sqlSession" /> -->
+    </bean>      
+	
+    <bean id="board2DAO" class="myspring.app.dao.Board2DAOImpl">
+        <property name="sqlSession" ref="sqlSessionTemplate" />
+    </bean>
+      
+</beans>

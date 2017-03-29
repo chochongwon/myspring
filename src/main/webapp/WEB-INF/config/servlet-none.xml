@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+		
+	<!-- 스프링에서 어노테이션을 쓰기 위한 등록 -->
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />		
+    
+	<!-- bean 등록... 해당 패키지 밑에 있는 모든 bean을 등록한다. -->
+	<context:component-scan base-package="myspring" />	
+
+	<!-- 리소스 등록... container 관리를 받지 않는 것들을 둔다. -->
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" cache-period="31556926" />
+	
+	<!-- Interceptor 부분 -->	
+	<interceptors>	    	
+		<interceptor>
+			<!-- 인터셉터가 적용될 URL -->
+			<mapping path="/*.do"/>
+			<!-- 인터셉터가 제외될 URL -->
+			<exclude-mapping path="/login.do"/>
+			<!-- 적용될 인터셉터를 지정한다. -->
+			<beans:bean id="loggerInterceptor" class="myspring.app.interceptor.LoggerInterceptor"></beans:bean>
+		</interceptor>
+	</interceptors>	
+	
+    <!-- ViewResolver -->
+    <!-- 기본적으로 컨트롤러에서 view 리턴 시 설정 -->
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/jsp/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>	
+    <!-- 컨트롤러에서 JsonView 를 만들기 위한 Resolver 등록 -->
+    <beans:bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver" p:order="1" />	
+	<!-- view를 jsonView로 설정하면 결과 값이 json 타입으로 반환 되도록 view 설정 -->
+	<beans:bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+		<beans:property name="contentType" value="text/html;charset=UTF-8" />
+	</beans:bean>	
+			
+</beans:beans>

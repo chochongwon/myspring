@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC  "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"  "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">  
+ 
+<tiles-definitions>  
+  
+    <!-- base-definition -->
+	<definition name="base-definition"
+	    template="/WEB-INF/jsp/app/tiles/layouts/tilesLayout.jsp">  
+	    <put-attribute name="title" value="" />  
+	    <put-attribute name="header" value="/WEB-INF/jsp/app/tiles/template/tilesHeader.jsp" />  
+	    <put-attribute name="menu" value="/WEB-INF/jsp/app/tiles/template/tilesMenu.jsp" />  
+	    <put-attribute name="body" value="" />  
+	    <put-attribute name="footer" value="/WEB-INF/jsp/app/tiles/template/tilesFooter.jsp" />  
+	</definition>  
+    <!-- base-definition Page -->       
+	<!--<definition name="main" extends="base-definition">  
+	    <put-attribute name="title" value="Welcome" />  
+	    <put-attribute name="body" value="/WEB-INF/jsp/app/tiles/main.jsp" />  
+	</definition> 
+	<definition name="selectListBoard1Tiles" extends="base-definition">  
+	    <put-attribute name="title" value="List" />  
+	    <put-attribute name="body" value="/WEB-INF/jsp/app/tiles/selectListBoard1Tiles.jsp" />  
+	</definition>  
+	<definition name="selectOneBoard1Tiles" extends="base-definition">  
+	    <put-attribute name="title" value="View" />  
+	    <put-attribute name="body" value="/WEB-INF/jsp/app/tiles/selectOneBoard1Tiles.jsp" />  
+	</definition> -->  
+	<definition name="*/*/*" extends="base-definition">  
+	    <put-attribute name="title" value="View" />  
+	    <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}.jsp" />  
+	</definition>
+	
+	<!-- no-menu -->
+	<definition name="no-menu" template="/WEB-INF/jsp/app/tiles/layouts/tilesNoMenuLayout.jsp">
+   		<put-attribute name="header" value="/WEB-INF/jsp/app/tiles/template/tilesHeader.jsp" />
+	   <put-attribute name="body" value="" />
+	   <put-attribute name="footer" value="/WEB-INF/jsp/app/tiles/template/tilesFooter.jsp" />
+	</definition>	
+    <!-- no-menu Page -->  
+	<definition name="/nomenu/*/*" extends="no-menu">
+	   <put-attribute name="title" value="{2}" />
+	   <put-attribute name="body" value="/WEB-INF/jsp/app/tiles/{1}.jsp" />
+	</definition>
+	
+	<!-- 다이나믹 템플릿 -->
+	<definition name="/dynamic/*/*" template="/WEB-INF/jsp/app/tiles/layouts/{1}Layout.jsp">
+	   <put-attribute name="title" value="{2}" />
+	   <put-attribute name="header" value="/WEB-INF/jsp/app/tiles/template/tilesHeader.jsp" />
+	   <put-attribute name="body" value="/WEB-INF/jsp/app/tiles/{1}.jsp" />  
+	   <put-attribute name="footer" value="/WEB-INF/jsp/app/tiles/template/tilesFooter.jsp" />  
+	</definition>
+
+</tiles-definitions>

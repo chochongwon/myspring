@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<context:component-scan base-package="myspring.sample">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+
+	<mvc:annotation-driven/>
+	
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	    <property name="prefix" value="/WEB-INF/jsp/"/>
+	    <property name="suffix" value=".jsp"/>
+	    
+	    <property name="exposeContextBeansAsAttributes" value="true"/>
+	</bean>
+
+	<mvc:default-servlet-handler/>
+	
+	<beans profile="development">
+		<bean id="mainBean" class="myspring.sample.bean.ProfileTestBean">
+			<property name="field1" value="루트 컨텍스트-개발1"/>
+			<property name="field2" value="루트 컨텍스트-개발2"/>
+		</bean>
+	</beans>
+	<beans profile="product">
+		<bean id="mainBean" class="myspring.sample.bean.ProfileTestBean">
+			<property name="field1" value="루트 컨텍스트-운영1"/>
+			<property name="field2" value="루트 컨텍스트-운영2"/>
+		</bean>
+	</beans>
+	
+	<beans profile="development">
+		<bean id="subBean" class="myspring.sample.bean.ProfileTestBean">
+			<property name="field1" value="서브 컨텍스트-개발1"/>
+			<property name="field2" value="서브 컨텍스트-개발2"/>
+		</bean>
+	</beans>
+	
+	<beans profile="product">
+		<bean id="subBean" class="myspring.sample.bean.ProfileTestBean">
+			<property name="field1" value="서브 컨텍스트-운영1"/>
+			<property name="field2" value="서브 컨텍스트-운영2"/>
+		</bean>
+	</beans>
+</beans>

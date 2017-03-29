@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="common">
+	<select id="selectFileInfo" parameterType="hashmap" resultType="hashmap">
+	    <![CDATA[
+	        SELECT
+	            STORED_FILE_NAME,
+	            ORIGINAL_FILE_NAME
+	        FROM
+	            TB_FILE
+	        WHERE
+	            IDX = #{IDX}
+	    ]]>
+	</select> 
+	
+	<!-- 
+		include는 MyBatis 기능으로 쿼리의 일부분만 만들어 놓고, 가져다 쓸 수 있도록 해주는 방법이다.  
+		<include refid="common.pagingPre"/> 식으로 쿼리내에 작성한다.
+		이 방식을 사용하면 개발자는 페이징을 신경쓰지 않고 쿼리를 작성하면된다.
+		단, 1) RNUM은 필수로 만들어줘야한다. 
+		2) 모든 쿼리를 이렇게 작성할 수는 없다. 
+		   화면에 보여줄 결과와 쿼리에 따라서는 페이징 쿼리 부분도 약간 바꿔야 할수도 있다. 
+		   그럴때는 어쩔수없이 전체적인 쿼리를 직접 써야한다. 그렇지만 그런 경우는 많이 없다. 
+	-->
+	<sql id="pagingPre">
+	    <![CDATA[
+	        SELECT AAA.*
+	        FROM(
+	            SELECT COUNT(*) OVER() AS TOTAL_COUNT,
+	                     AA.*
+	            FROM( 
+	    ]]>
+	</sql>	 
+	<sql id="pagingPost">
+	    <![CDATA[
+	                    ) AA
+	                ) AAA
+	        WHERE AAA.RNUM BETWEEN #{START} AND #{END}
+	    ]]>
+	</sql>
+	
+	<!-- 
+		페이징 처리를 ROW_NUMBER() 함수를 이용한 방식이다. 
+		이러한 방식은 오라클에서 공식적으로 보여주고 있는 방식이다. 
+		(http://www.oracle.com/technetwork/issue-archive/2007/07-jan/o17asktom-093877.html) 
+		URL의 하단에 Pagination in Getting Rows N Through M 부분을 확인하면 된다
+	-->
+	<select id="pagingType" parameterType="hashmap" resultType="hashmap">
+	    <![CDATA[
+			SELECT AAA.*
+			 FROM (
+				 	SELECT COUNT(*) OVER() AS TOTAL_COUNT
+				            , AA.*
+				     FROM (
+					 		SELECT ROW_NUMBER() OVER (ORDER BY IDX DESC) RNUM
+					                , IDX
+					                , TITLE
+					                , HIT_CNT
+					                , CREA_DTM
+					         FROM TB_BOARD) AA
+			         		 ) AAA
+		   WHERE AAA.RNUM BETWEEN 0 AND 20
+	    ]]>
+	</select>
+	
+	<select id="pagingType1" parameterType="hashmap" resultType="hashmap">
+	    <![CDATA[
+			SELECT *
+			 FROM (
+				 	SELECT ROWNUM AS RNUM, T1.*
+				    FROM
+				        (
+				        SELECT *
+				        FROM TB_BOARD
+				        ORDER BY IDX DESC) T1
+				    WHERE ROWNUM <= 20)
+			 WHERE RNUM >= 0
+	    ]]>
+	</select>
+	
+	<select id="pagingType2" parameterType="hashmap" resultType="hashmap">
+	    <![CDATA[
+			SELECT *
+			FROM(
+			    SELECT T1.*,
+			        ROWNUM AS RNUM,
+			        COUNT(*) OVER() AS TOTAL_CNT
+			    FROM(
+			        SELECT *
+			        FROM  TB_BOARD
+			        ORDER BY IDX DESC) T1
+			    )
+			WHERE RNUM > 0 AND RNUM <= 20
+	    ]]>
+	</select>
+</mapper>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd" 
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security-4.2.xsd"
+	id="WebApp_ID" version="3.1">
+
+	<!-- spring configLocation 설정 -->
+	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+	<context-param>  
+	    <param-name>spring.profiles.active</param-name>  
+	    <param-value>dev</param-value>  
+	</context-param>  
+	<context-param>  
+	    <param-name>spring.profiles.default</param-name>  
+	    <param-value>dev</param-value>  
+	</context-param>
+	<context-param>  
+	    <param-name>spring.liveBeansView.mbeanDomain</param-name>  
+	    <param-value>dev</param-value>  
+	</context-param>
+	
+	<!-- 적용할 디폴트 profile 설정 -->
+	<context-param>
+		<param-name>spring.profiles.default</param-name>
+		<param-value>product</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:config/spring/context-*.xml</param-value>
+	</context-param>
+    
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>	
+	
+	<!-- Processes application requests -->
+	<!-- DispatcherServlet은 여러개 정의가능하며 load-on-startup의 값이 작은 숫자로 된 DispatcherServlet부터 실행하게 된다. -->	
+	<servlet>
+		<servlet-name>appServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/config/*-servlet.xml
+			</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>	
+	<!-- 요청되는 URL중에 ".do"로 끝나는 모든 요청은 dispatcher에서 처리함 -->	
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>	
+		
+    <!-- apache Tiles -->
+	<servlet>
+		<servlet-name>tilesServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/config/root-servlet.xml
+				/WEB-INF/config/servlet-tiles.xml
+			</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>tilesServlet</servlet-name>
+		<url-pattern>*.tiles</url-pattern>
+	</servlet-mapping>	    
+		
+    <!-- none Tiles -->
+	<servlet>
+		<servlet-name>webServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/config/root-servlet.xml
+				/WEB-INF/config/servlet-web.xml
+			</param-value>
+		</init-param>
+		<load-on-startup>3</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>webServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>	
+	
+	
+    <!-- Servlet Filter : 프로그램 흐름의 앞이나 뒤에 공통적인 처리를 추가할 수 있다. (ServletFilter, Interceptor, AOP) -->
+	<!-- encodingFilter의 이름은 encoding 이고, 값은 UTF-8 인 파라미터이다. 필터를 /* 에 맵핑했다. -->
+	<!-- 이것은 필터가 servlet, jsp 뿐만아니라 이미지와 같은 모든 자원의 요청에도 호출된다. 실제 사용시에는 필요한 자원만 맵핑되도록 한다. -->    
+  	<filter>
+        <filter-name>testFilter</filter-name>
+        <filter-class>myspring.app.filter.TestFilter</filter-class>
+	    <init-param>
+	        <param-name>encoding</param-name>
+	        <param-value>UTF-8</param-value>
+	    </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>testFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>  
+    
+	<!-- 인코딩 필터 설정 "/*"로 들어오는 모든 것들에 대해 UTF-8 적용 -->
+	<filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+	    <init-param>
+	        <param-name>encoding</param-name>
+	        <param-value>UTF-8</param-value>
+	    </init-param>
+	    <init-param>
+	        <param-name>forceEncoding</param-name>
+	        <param-value>true</param-value>
+	    </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+	<!-- log4j 설정파일을 호출한다. -->
+	<!-- <listener>
+		<listener-class>org.springframework.web.Log4jConfigListener</listener-class>
+	</listener> 
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>/WEB-INF/config/log/log4j.xml</param-value>
+	</context-param> -->
+	     
+	<!-- Spring security 이중 로그인을 막기 위한 리스너 클래스이다 -->
+	<listener>
+		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+	</listener>
+	
+	<!-- Spring security -->
+	<!--
+	<filter>
+	   <filter-name>springSecurityFilterChain</filter-name>
+	   <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+	   <filter-name>springSecurityFilterChain</filter-name>
+	   <url-pattern>/*</url-pattern>
+	</filter-mapping>
+	-->
+	<!-- <security:http auto-config='true'>
+		<security:intercept-url pattern="/favicon.ico" access="ROLE_ANONYMOUS" /> 
+		<security:intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+	</security:http> -->
+	
+     <!-- Add JBoss EAP -->
+     <distributable />
+     		
+	<!-- 프로젝트 실행시 초기 실행되는 파일 -->
+	<!-- <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list> -->
+    
+	<!-- <error-page>
+	   <error-code>500</error-code>
+	   <location>/WEB-INF/jsp/error.jsp</location>
+	</error-page> -->
+</web-app>

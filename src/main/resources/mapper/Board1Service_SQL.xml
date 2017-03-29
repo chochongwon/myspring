@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. --> 
+<mapper namespace="myspring.app.dao.Board1DAO"> 
+	<!-- id 속성은 DAO 의 메소드와 같아야 한다. 여기의 boardVO 는 mybatis-confg.xml 에 Alias 되어 있습니다. --> 
+	<select id="selectOneBoard1" resultType="board1VO">
+	SELECT IDX 
+	       , PARENT_IDX 
+	       , TITLE 
+	       , CONTENTS 
+	       , HIT_CNT 
+	       , DEL_GB 
+	       , CREA_DTM 
+	       , CREA_ID 
+	FROM TB_BOARD 
+   WHERE IDX = #{idx}
+	  AND ROWNUM = 1
+	</select>
+	
+	<select id="selectListBoard1" resultType="board1VO"> 
+	SELECT IDX 
+	       , PARENT_IDX 
+	       , TITLE 
+	       , CONTENTS 
+	       , HIT_CNT 
+	       , DEL_GB 
+	       , CREA_DTM 
+	       , CREA_ID 
+	FROM TB_BOARD 
+    	<if test="idx != idx">
+         NUM = #{idx}
+    	</if> 
+	ORDER BY IDX DESC 
+	</select> 	
+	
+	<resultMap id="boardMap" type="hashmap" />
+	<select id="mapProcedureListBoard1" statementType="CALLABLE" parameterType="hashmap">
+		{ CALL test_proc(
+		          #{idx}, 
+		          #{crea_id, mode=INOUT, jdbcType=VARCHAR, javaType=String}, 
+		          #{resultList, mode=OUT, jdbcType=CURSOR, javaType=ResultSet, resultMap=boardMap}) 
+		}
+	</select>
+	
+	<resultMap id="procVO1"  type="myspring.app.vo.Board1VO"> 
+		<result property="idx" column="NUM"/> 
+		<result property="parent_idx" column="PARENT_IDX"/> 
+		<result property="title" column="TITLE"/> 
+		<result property="contents" column="CONTENTS"/> 
+		<result property="hit_cnt" column="HIT_CNT"/> 
+		<result property="del_gb" column="DEL_GB"/>
+		<result property="crea_dtm" column="CREA_DTM"/>  
+		<result property="crea_id" column="CREA_ID"/> 
+	</resultMap>
+	<select id="procedureListBoard1" statementType="CALLABLE" parameterType="board1TransferVO">
+		{ CALL test_proc(
+		          #{idx}, 
+		          #{crea_id, mode=INOUT, jdbcType=VARCHAR, javaType=String}, 
+		          #{resultList, mode=OUT, jdbcType=CURSOR, javaType=ResultSet, resultMap=procVO1}) 
+		}
+	</select>
+	
+	<resultMap id="procVO2"  type="myspring.app.vo.Board1VO"> 
+		<result property="idx" column="IDX"/> 
+		<result property="parent_idx" column="PARENT_IDX"/> 
+		<result property="title" column="TITLE"/> 
+		<result property="contents" column="CONTENTS"/> 
+		<result property="hit_cnt" column="HIT_CNT"/> 
+		<result property="del_gb" column="DEL_GB"/>
+		<result property="crea_dtm" column="CREA_DTM"/>  
+		<result property="crea_id" column="CREA_ID"/> 
+	</resultMap>
+	<select id="anonymousBlockListBoard1" statementType="CALLABLE" parameterType="board1TransferVO">
+		{ CALL
+			DECLARE
+				p_idx  INT;
+				p_crea_id VARCHAR2(20);
+				p_rc   SYS_REFCURSOR;
+			BEGIN
+				p_idx  := #{idx};
+				p_crea_id := #{crea_id};
+				
+				OPEN p_rc FOR
+                    SELECT IDX 
+					       , PARENT_IDX 
+					       , TITLE 
+					       , CONTENTS
+					       , HIT_CNT 
+					       , DEL_GB 
+					       , CREA_DTM 
+					       , CREA_ID 
+                      FROM TB_BOARD
+                     WHERE IDX >= p_idx
+                       AND CREA_ID like p_crea_id||'%'
+                  ORDER BY IDX DESC;
+                  
+                #{resultList, mode=OUT, jdbcType=CURSOR, javaType=ResultSet, resultMap=procVO2} := p_rc;
+                
+                #{crea_id, mode=OUT, jdbcType=VARCHAR, javaType=String} := 'call anonymous block....';
+			END
+		}
+	</select>
+
+</mapper>

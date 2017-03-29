@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"    
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+        
+	<!-- 스프링에서 어노테이션을 쓰기 위한 등록 -->
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven>
+		<!-- CustomMapArgumentResolver 빈(bean)을 수동으로 등록한다. -->
+        <argument-resolvers>
+            <beans:bean class="myspring.sample.resolver.CustomMapArgumentResolver"></beans:bean>      
+        </argument-resolvers>
+        
+		<message-converters>
+		<!-- @ResponseBody로 String 처리할때 한글처리 -->
+		    <beans:bean class="org.springframework.http.converter.StringHttpMessageConverter">
+		        <beans:property name="supportedMediaTypes">
+		            <beans:list>
+		                <beans:value>text/html;charset=UTF-8</beans:value>
+		            </beans:list>
+		        </beans:property>
+		    </beans:bean>
+		</message-converters>
+    </annotation-driven>
+    
+	<!-- bean 등록... 해당 패키지 밑에 있는 모든 bean을 등록한다. -->
+	<!-- 
+		스프링에서 자동적으로 스테레오 타입의 어노테이션을 등록해주는 역할은 한다.
+		@Controller, @Service, @Repository, @Component 라는 어노테이션을 사용한다.
+		단순히 이러한 어노테이션을 붙이기만 해도 각각 Controller, Service, DAO의 역할을 할 수 있었던 이유가 
+		component-scan을 통해서 스프링이 자동적으로 bean을 등록시켜줌으로써 그 기능을 했던 것이다. 
+		만약 component-scan을 하지 않았다면, Controller, Service, DAO를 생성할 때 마다 xml 파일에 작성해야지만 사용할 수 있다.
+		굉장히 비효율적인 일이 아닐수가 없다. 
+	 -->
+	<!-- use-default-filters="false"라는 값을 주게되면 이와 같은 어노테이션을 자동으로 검색하지 않겠다는 뜻이 된다. -->
+	<!--
+		<context:include-filter> 태그에 해당하는 어노테이션만 검색하고 bean을 등록시켜 준다. 
+		여기서는 Controller 어노테이션만 검색을 한 것이다.
+		나머지 @Service, @Repository, @Component 어노테이션은 
+		다른곳(context-common.xml)에서 component-scan을 하여 등록할 것이다.
+	 -->
+	<!-- <context:component-scan base-package="myspring" /> -->
+	<context:component-scan base-package="myspring" use-default-filters="false">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+	<!-- 리소스 등록... container 관리를 받지 않는 것들을 둔다. -->
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" cache-period="31556926" />
+	
+	<!-- Interceptor 부분 -->		
+	<interceptors>
+		<!-- message.properties 언어변경을 위한 인터셉터 등록 -->
+		<!-- /i18n.do?lang=ko, /i18n.do?lang=en 등으로 요청을 보내면 컨트롤러 앞단에서 요청을 가로채서 언어를 변경하는 역할을 수행 -->
+	    <beans:bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+	    	<beans:property name="paramName" value="lang" />
+	    </beans:bean>
+		
+		<interceptor>
+			<!-- 인터셉터가 적용될 URL -->
+			<mapping path="/**"/>
+			<!-- 인터셉터가 제외될 URL -->
+			<exclude-mapping path="/login.do"/>
+			<!-- 적용될 인터셉터를 지정한다. -->
+			<beans:bean id="loggerInterceptor" class="myspring.app.interceptor.LoggerInterceptor"></beans:bean>
+		</interceptor>	
+		
+		<interceptor>
+			<!-- 인터셉터가 적용될 URL -->
+			<mapping path="/*.do" />
+			<!-- 인터셉터가 제외될 URL -->
+			<exclude-mapping path="/login.do"/>
+			<!-- 적용될 인터셉터를 지정한다. -->
+			<beans:bean id="testInterceptor" class="myspring.app.interceptor.TestInterceptor" />
+		</interceptor>	
+			
+	</interceptors>   	 
+	   	 
+	<!-- AOP 부분 -->
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	<beans:bean id="loggerAspect" class="myspring.sample.aspect.LoggerAspect" />
+	
+	<!-- ViewResolver Type 2 -->
+    <beans:bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>     
+    <beans:bean class="org.springframework.web.servlet.view.BeanNameViewResolver" p:order="0" />
+    <beans:bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />     
+    <beans:bean
+        class="org.springframework.web.servlet.view.UrlBasedViewResolver" p:order="1"
+        p:viewClass="org.springframework.web.servlet.view.JstlView"
+        p:prefix="/WEB-INF/jsp/" p:suffix=".jsp">
+    </beans:bean>
+	
+	<!-- <beans:bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+      <beans:property name="exceptionMappings">
+        <beans:props>
+            <beans:prop key="java.lang.Exception">error</beans:prop>
+        </beans:props>
+      </beans:property>
+    </beans:bean> -->	
+	 
+</beans:beans>
+
+

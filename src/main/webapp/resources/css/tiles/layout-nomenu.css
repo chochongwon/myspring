@@ -1,0 +1,19 @@
+* { 
+ margin:0; 
+ padding:0; 
+}
+
+#header {
+ background-color: gray;
+}
+
+#siteContent {
+ min-height: 200px;
+ padding-left: 10px;
+ background-color: white;
+}
+
+#footer {
+ background-color:gray;
+ height: 30px;
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration 
+ PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<!-- 여러가지 기본 옵션을 지정한다. -->
+	<settings>
+		<!-- 오라클 필드속성이 READ_COUNT처럼 언더 스코어가 있을 때 VO의 readCount처럼 카멜케이스로 변환되게 한다. -->
+		<!-- <setting name="mapUnderscoreToCamelCase" value="true"/> -->
+		<setting name="cacheEnabled" value="false" />
+		<setting name="useGeneratedKeys" value="true" />
+		<setting name="defaultExecutorType" value="REUSE" />
+	</settings>
+	
+	<typeAliases>
+		<typeAlias alias="board1VO" type="myspring.app.vo.Board1VO" />
+		<typeAlias alias="board1TransferVO" type="myspring.app.vo.Board1TransferVO" />
+	</typeAliases>
+</configuration>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+        http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.3.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<!-- 메세지 파일의 위치를 지정한다. language_언어.properties 파일을 찾는다. -->
+				<value>/WEB-INF/messages/message</value>
+			</list>
+		</property>
+		
+		<!-- 파일의 기본 인코딩을 지정한다. -->
+		<property name="defaultEncoding" value="UTF-8" />
+		
+		<!-- properties 파일이 변경되었는지 확인하는 주기를 지정한다. 60초간격으로 지정 -->
+		<property name="cacheSeconds" value="60" />
+	</bean>
+		
+    <!-- 
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+	     <property name="basenames" value="/config/messages/"/>	         
+	</bean>
+	-->
+	
+	<!-- 언어 정보를 세션에 저장하여 사용한다. -->
+	<!-- localeResolver는 브라우저에서 보내는 헤더정보를 사용할 수 도 있고, 쿠키 또는 세션에 저장하여 사용할 수 도 있다. -->
+	<bean id="localeResolver"	class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+		<property name="defaultLocale" value="ko_KR" />
+	</bean>
+	
+	<!--
+	<beans:bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" >
+		<beans:property name="defaultLocale" value="ko" />
+	    <beans:property name="cookieName" value="home-lang"/>   
+	    <beans:property name="cookieMaxAge" value="-1"/>
+	    <beans:property name="cookiePath" value="/"/>
+	</beans:bean>
+ 	-->	
+</beans>
