@@ -8,7 +8,7 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 
 import myspring.batch.listener.InMemoryJobListener;
-import myspring.batch.run.InMemoryJobRun;
+import myspring.batch.rauncher.InMemoryJobRun;
 
 public class JobRuntime {
 	private static final Logger logger = Logger.getLogger(JobRuntime.class);
@@ -29,7 +29,7 @@ public class JobRuntime {
 		this.job = job;
 	}
 	
-	public void launch() throws Exception {
+	public void start() throws Exception {
 		JobParameters jobParameters = new JobParametersBuilder().addLong("batch-date",
 				System.currentTimeMillis()).toJobParameters();
 		

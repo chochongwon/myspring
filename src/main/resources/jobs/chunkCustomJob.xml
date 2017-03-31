@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <beans xmlns="http://www.springframework.org/schema/beans"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 	 
+	 xmlns:aop="http://www.springframework.org/schema/aop"
+	 xmlns:tx="http://www.springframework.org/schema/tx" 
+       xmlns:p="http://www.springframework.org/schema/p"
+	 xmlns:batch="http://www.springframework.org/schema/batch"
+	 xmlns:task="http://www.springframework.org/schema/task"
+	 xmlns:context="http://www.springframework.org/schema/context"
+	 xsi:schemaLocation="
+	    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+	    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+	    http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<import resource="../config/spring/context-batch.xml" />
+	<import resource="../config/spring/context-datasource.xml" />
+	
+    <!-- ItemReader -->
+    <bean id="chunkCustomReader" class="myspring.batch.reader.ChunkCustomItemReader">
+        <!--
+			Processor는 다음의 작업을 합니다.
+			이름앞에 *** 특수 기호로 시작하는 문자는 *** 대신에  'Mr."로 변경하고.
+			이름앞에 +++ 특수 기호로 시작하는 문자는 +++ 대신네 'Mrs.'로 변경한다.
+			그리고, 아무 특수 기호가 없는 문자는 (Joseph) 유효하지 않은 데이터로 가정하고 필터링 시킨다. 
+         -->
+        <property name="itemList" >
+            <list>
+                <value>***Steve</value>
+                <value>***Mike</value>
+                <value>Joseph</value>
+                <value>+++Juily</value>
+            </list>
+        </property>
+    </bean>
+ 
+    <!-- ItemProcessor -->
+    <bean id="chunkCustomProcessor" class="myspring.batch.processor.ChunkCustomItemProcessor" />
+ 
+    <!-- ItemWriter -->
+    <bean id="chunkCustomWriter" class="myspring.batch.writer.ChunkCustomItemWriter" />
+	
+	<batch:job id="chunkCustomJob">
+		<batch:step id="readWriteStep">
+			<batch:tasklet>
+				<batch:chunk reader="chunkCustomReader" processor="chunkCustomProcessor" writer="chunkCustomWriter"
+					commit-interval="2"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+		
+	<!-- Custom Job Launcher Class -->
+	<bean id="jobRuntime" class="myspring.batch.launcher.JobRuntime">
+		<property name="jobLauncher" ref="jobLauncher"/>
+		<property name="job" ref="chunkCustomJob"/>
+	</bean>
+</beans>

@@ -1,4 +1,4 @@
-package myspring.batch.run;
+package myspring.batch.rauncher;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -20,7 +20,7 @@ public class InMemoryJobRun {
 					new ClassPathXmlApplicationContext(springConfig);
 
 			JobRuntime jobRuntime = (JobRuntime) context.getBean("jobRuntime");
-			jobRuntime.launch();
+			jobRuntime.start();
 			
 		} catch (Exception e) {
 			logger.info("Launcher has failed", e);
