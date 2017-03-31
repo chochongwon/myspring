@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <beans xmlns="http://www.springframework.org/schema/beans"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 	 
+	 xmlns:aop="http://www.springframework.org/schema/aop"
+	 xmlns:tx="http://www.springframework.org/schema/tx" 
+       xmlns:p="http://www.springframework.org/schema/p"
+	 xmlns:batch="http://www.springframework.org/schema/batch"
+	 xmlns:task="http://www.springframework.org/schema/task"
+	 xmlns:context="http://www.springframework.org/schema/context"
+	 xsi:schemaLocation="
+	    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+	    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+	    http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<import resource="../config/spring/context-batch.xml" />
+	<import resource="../config/spring/context-datasource.xml" />
+	
+	<bean id="inMemoryHelloTask" class="myspring.batch.tasklet.InMemoryHelloTasklet"/>
+	<bean id="inMemoryByeTask" class="myspring.batch.tasklet.InMemoryByeTasklet"/>
+	<bean id="inMemoryJobListener" class="myspring.batch.listener.InMemoryJobListener"/>
+	<bean id="inMemoryStepListener" class="myspring.batch.listener.InMemoryStepListener"/>
+	
+	<batch:job id="inMemoryJob">
+		<batch:step id="inMemoryHelloStep" next="inMemoryByeStep">
+			<batch:tasklet ref="inMemoryHelloTask"/>
+			<batch:listeners>
+				<batch:listener ref="inMemoryStepListener"/>
+			</batch:listeners>
+		</batch:step>
+		<batch:step id="inMemoryByeStep">
+			<batch:tasklet ref="inMemoryByeTask"/>
+			<batch:listeners>
+				<batch:listener ref="inMemoryStepListener"/>
+			</batch:listeners>
+		</batch:step>
+		<batch:listeners>
+			<batch:listener ref="inMemoryJobListener"/>
+		</batch:listeners>
+	</batch:job>
+		
+	<!-- Custom Job Launcher Class -->
+	<bean id="jobRuntime" class="myspring.batch.launcher.JobRuntime">
+		<property name="jobLauncher" ref="jobLauncher"/>
+		<property name="job" ref="inMemoryJob"/>
+	</bean>
+</beans>
