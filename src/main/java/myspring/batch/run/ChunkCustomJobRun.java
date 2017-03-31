@@ -1,4 +1,4 @@
-package myspring.batch.rauncher;
+package myspring.batch.run;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -6,14 +6,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import myspring.batch.launcher.JobRuntime;
 
-public class InMemoryJobRun {
+public class ChunkCustomJobRun {
 	private static final Logger logger = Logger.getLogger(JobRuntime.class);
 
 	public static void main(String[] args) {
 		try {
 			String[] springConfig  =
 				{
-					"jobs/inMemoryJob.xml"
+					"jobs/chunkCustomJob.xml"
 				};
 
 			ApplicationContext context =

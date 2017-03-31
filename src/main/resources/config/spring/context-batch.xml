@@ -8,11 +8,16 @@
 	 xmlns:task="http://www.springframework.org/schema/task"
 	 xmlns:context="http://www.springframework.org/schema/context"
 	 xsi:schemaLocation="
-	    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-	    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
-	    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
-	    http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
-	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd"
+	    http://www.springframework.org/schema/beans 
+	    http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	    http://www.springframework.org/schema/aop 
+	    http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+	    http://www.springframework.org/schema/task 
+	    http://www.springframework.org/schema/task/spring-task-4.3.xsd
+	    http://www.springframework.org/schema/batch 
+	    http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+	    http://www.springframework.org/schema/context 
+	    http://www.springframework.org/schema/context/spring-context-4.3.xsd"
 	default-autowire="byType">
 		
 	<!-- stored job-meta in memory -->

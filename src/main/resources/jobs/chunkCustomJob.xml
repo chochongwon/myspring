@@ -20,7 +20,7 @@
     <!-- ItemReader -->
     <bean id="chunkCustomReader" class="myspring.batch.reader.ChunkCustomItemReader">
         <!--
-			Processor는 다음의 작업을 합니다.
+			Processor는 다음의 작업을 한다.
 			이름앞에 *** 특수 기호로 시작하는 문자는 *** 대신에  'Mr."로 변경하고.
 			이름앞에 +++ 특수 기호로 시작하는 문자는 +++ 대신네 'Mrs.'로 변경한다.
 			그리고, 아무 특수 기호가 없는 문자는 (Joseph) 유효하지 않은 데이터로 가정하고 필터링 시킨다. 

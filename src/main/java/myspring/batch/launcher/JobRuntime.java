@@ -8,7 +8,7 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 
 import myspring.batch.listener.InMemoryJobListener;
-import myspring.batch.rauncher.InMemoryJobRun;
+import myspring.batch.run.InMemoryJobRun;
 
 public class JobRuntime {
 	private static final Logger logger = Logger.getLogger(JobRuntime.class);
