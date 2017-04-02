@@ -6,8 +6,8 @@ import org.springframework.batch.core.JobExecutionListener;
 
 import myspring.batch.launcher.JobRuntime;
 
-public class InMemoryJobListener implements JobExecutionListener {
-	private static final Logger logger = Logger.getLogger(InMemoryJobListener.class);
+public class TaskletCustomJobListener implements JobExecutionListener {
+	private static final Logger logger = Logger.getLogger(TaskletCustomJobListener.class);
 
 	@Override
 	public void afterJob(JobExecution exec) {

@@ -6,14 +6,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import myspring.batch.launcher.JobRuntime;
 
-public class InMemoryJobRun {
+public class TaskletCustomJobRun {
 	private static final Logger logger = Logger.getLogger(JobRuntime.class);
 
 	public static void main(String[] args) {
 		try {
 			String[] springConfig  =
 				{
-					"jobs/inMemoryJob.xml"
+					"jobs/taskletCustomJob.xml"
 				};
 
 			ApplicationContext context =

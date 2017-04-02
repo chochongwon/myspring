@@ -6,10 +6,10 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
-import myspring.batch.listener.InMemoryStepListener;
+import myspring.batch.listener.TaskletCustomStepListener;
 
-public class InMemoryByeTasklet implements Tasklet {
-	private static final Logger logger = Logger.getLogger(InMemoryByeTasklet.class);
+public class TaskletCustomByeTasklet implements Tasklet {
+	private static final Logger logger = Logger.getLogger(TaskletCustomByeTasklet.class);
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext arg1) throws Exception {

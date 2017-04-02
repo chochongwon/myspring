@@ -40,8 +40,7 @@
 		<property name="lineMapper">
 		    <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
 			<property name="lineTokenizer">
-				<bean
-					class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+				<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
 					<property name="names" value="id,sales,qty,staffName,date" />
 				</bean>
 			</property>

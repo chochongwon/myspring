@@ -9,6 +9,11 @@
             <param name="ConversionPattern" value="%d %p [%c{5}] %m %n" />
         </layout>  
     </appender>
+    <appender name="console-infolog" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %5p %m%n" />
+        </layout>  
+    </appender>
 
 	<!-- 날짜별 로그 파일 생성 --> 
 	<appender name="rollingFile" class="org.apache.log4j.DailyRollingFileAppender"> 
@@ -69,13 +74,14 @@
 	</logger>
     <logger name="jdbc.sqlonly" additivity="false"> 
         <level value="DEBUG"/> 
-        <!-- <appender-ref ref="console-infolog"/> --> 
-    </logger>     
+        <appender-ref ref="console-infolog"/>
+    </logger>  
+    <!--    
     <logger name="jdbc.resultsettable" additivity="false"> 
         <level value="INFO"/> 
         <appender-ref ref="console"/> 
     </logger> 
- 
+     -->
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
 		<level value="info" />

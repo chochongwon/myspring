@@ -17,32 +17,32 @@
 	<import resource="../config/spring/context-batch.xml" />
 	<import resource="../config/spring/context-datasource.xml" />
 	
-	<bean id="inMemoryHelloTask" class="myspring.batch.tasklet.InMemoryHelloTasklet"/>
-	<bean id="inMemoryByeTask" class="myspring.batch.tasklet.InMemoryByeTasklet"/>
-	<bean id="inMemoryJobListener" class="myspring.batch.listener.InMemoryJobListener"/>
-	<bean id="inMemoryStepListener" class="myspring.batch.listener.InMemoryStepListener"/>
+	<bean id="taskletCustomHelloTask" class="myspring.batch.tasklet.TaskletCustomHelloTasklet"/>
+	<bean id="taskletCustomByeTask" class="myspring.batch.tasklet.TaskletCustomByeTasklet"/>
+	<bean id="taskletCustomJobListener" class="myspring.batch.listener.TaskletCustomJobListener"/>
+	<bean id="taskletCustomStepListener" class="myspring.batch.listener.TaskletCustomStepListener"/>
 	
-	<batch:job id="inMemoryJob">
-		<batch:step id="inMemoryHelloStep" next="inMemoryByeStep">
-			<batch:tasklet ref="inMemoryHelloTask"/>
+	<batch:job id="taskletCustomJob">
+		<batch:step id="taskletCustomHelloStep" next="taskletCustomByeStep">
+			<batch:tasklet ref="taskletCustomHelloTask"/>
 			<batch:listeners>
-				<batch:listener ref="inMemoryStepListener"/>
+				<batch:listener ref="taskletCustomStepListener"/>
 			</batch:listeners>
 		</batch:step>
-		<batch:step id="inMemoryByeStep">
-			<batch:tasklet ref="inMemoryByeTask"/>
+		<batch:step id="taskletCustomByeStep">
+			<batch:tasklet ref="taskletCustomByeTask"/>
 			<batch:listeners>
-				<batch:listener ref="inMemoryStepListener"/>
+				<batch:listener ref="taskletCustomStepListener"/>
 			</batch:listeners>
 		</batch:step>
 		<batch:listeners>
-			<batch:listener ref="inMemoryJobListener"/>
+			<batch:listener ref="taskletCustomJobListener"/>
 		</batch:listeners>
 	</batch:job>
 		
 	<!-- Custom Job Launcher Class -->
 	<bean id="jobRuntime" class="myspring.batch.launcher.JobRuntime">
 		<property name="jobLauncher" ref="jobLauncher"/>
-		<property name="job" ref="inMemoryJob"/>
+		<property name="job" ref="taskletCustomJob"/>
 	</bean>
 </beans>
