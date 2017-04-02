@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <beans xmlns="http://www.springframework.org/schema/beans"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 	 
+	 xmlns:aop="http://www.springframework.org/schema/aop"
+	 xmlns:tx="http://www.springframework.org/schema/tx" 
+       xmlns:p="http://www.springframework.org/schema/p"
+	 xmlns:batch="http://www.springframework.org/schema/batch"
+	 xmlns:task="http://www.springframework.org/schema/task"
+	 xmlns:context="http://www.springframework.org/schema/context"
+	 xsi:schemaLocation="
+	    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+	    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+	    http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<import resource="../config/spring/context-batch.xml" />
+	<import resource="../config/spring/context-datasource.xml" />
+		    
+    <!-- 6. Define JdbcCursorItemReader -->
+    <bean id="dbPagingReader" class="org.springframework.batch.item.database.JdbcPagingItemReader">
+    	<property name="dataSource" ref="dataSource" />
+    	<!-- 쿼리를 생성하기 위해 데이터베이스 유형에 맞는 PagingQueryProvider를 설정한다. -->
+    	<property name="queryProvider">
+    		<!-- org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean -->
+    		<bean class="org.springframework.batch.item.database.support.OraclePagingQueryProvider">
+	    		<property name="selectClause" value="select player_id, first_name, last_name, position, birth_year, debut_year" />
+	    		<property name="fromClause" value="from player" />
+	    		<property name="whereClause" value="where 1=1" />
+	    		<property name="sortKeys">
+	                <map>
+	                    <entry key="player_id" value="ASCENDING"/>
+	                </map>
+	    		</property>
+    		</bean>
+    	</property>
+    	<!-- 한번의 쿼리에서 읽어 올 열의 사이즈를 설정한다. pageSize의 설정값과 Job설정의 commit-interval 설정값이 같을때 최적의 성능을 제공한다. -->
+    	<property name="pageSize" value="2" />
+    	<!-- DB에서 읽어온 player 정보를 PlayerBean 오브젝트로 매핑할 RowMapper를 설정한다. -->
+	    <property name="rowMapper" ref="playerRowMapper" />
+    </bean>
+    
+    <bean id="playerRowMapper" class="myspring.batch.reader.PlayerRowMapper" />
+    
+    <!-- 7. Define FlatFileItemWriter -->
+    <bean id="delimitedFileWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+    	<property name="resource" value="file:src/main/resources/files/output/player.txt"  />
+    	<!-- PlayerBean의 각 필드 정보를 한 줄의 라인으로 생성하여 파일에 쓰기하는 역할을 한다. -->
+    	<property name="lineAggregator">
+    		<bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+    			<property name="delimiter" value="," />
+    			<property name="fieldExtractor">
+    				<!-- 
+    					JdbcPagingItemReader의 PlayerRowMapper에 의해 리턴된 PlayerBean의 필드 정보를 Reflection을 이용해 읽는 역할 을 한다.
+    					FieldExtractor의 names 프로퍼티에 설정된 값은 PlayerBean의 변수명이다.
+    				 -->
+    				<bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+    					<property name="names" value="id, firstName, lastName, position, birthYear, debutYear" />
+    				</bean>
+    			</property>
+    		</bean>
+    	</property>
+    </bean>	
+	
+	<job id="DBToFileJob"  xmlns="http://www.springframework.org/schema/batch">
+		<step id="dbToDelimitedFileStep">
+			<tasklet>
+				<chunk reader="dbPagingReader" writer="delimitedFileWriter" commit-interval="2"/>
+			</tasklet>
+		</step>
+	</job>
+		
+	<!-- Custom Job Launcher Class -->
+	<bean id="jobRuntime" class="myspring.batch.launcher.JobRuntime">
+		<property name="jobLauncher" ref="jobLauncher"/>
+		<property name="job" ref="DBToFileJob"/>
+	</bean>
+</beans>
