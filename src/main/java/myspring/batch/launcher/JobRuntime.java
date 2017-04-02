@@ -30,6 +30,7 @@ public class JobRuntime {
 	}
 	
 	public void start() throws Exception {
+		logger.info("batch-date = " + System.currentTimeMillis());;
 		JobParameters jobParameters = new JobParametersBuilder().addLong("batch-date",
 				System.currentTimeMillis()).toJobParameters();
 		

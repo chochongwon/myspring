@@ -41,14 +41,14 @@
     <!-- ItemWriter -->
     <bean id="chunkCustomWriter" class="myspring.batch.writer.ChunkCustomItemWriter" />
 	
-	<batch:job id="chunkCustomJob">
-		<batch:step id="readWriteStep">
-			<batch:tasklet>
+	<job id="chunkCustomJob"  xmlns="http://www.springframework.org/schema/batch">
+		<step id="readWriteStep">
+			<tasklet>
 				<batch:chunk reader="chunkCustomReader" processor="chunkCustomProcessor" writer="chunkCustomWriter"
 					commit-interval="2"/>
-			</batch:tasklet>
-		</batch:step>
-	</batch:job>
+			</tasklet>
+		</step>
+	</job>
 		
 	<!-- Custom Job Launcher Class -->
 	<bean id="jobRuntime" class="myspring.batch.launcher.JobRuntime">

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <beans xmlns="http://www.springframework.org/schema/beans"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 	 
+	 xmlns:aop="http://www.springframework.org/schema/aop"
+	 xmlns:tx="http://www.springframework.org/schema/tx" 
+       xmlns:p="http://www.springframework.org/schema/p"
+	 xmlns:batch="http://www.springframework.org/schema/batch"
+	 xmlns:task="http://www.springframework.org/schema/task"
+	 xmlns:context="http://www.springframework.org/schema/context"
+	 xsi:schemaLocation="
+	    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+	    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+	    http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<import resource="../config/spring/context-batch.xml" />
+	<import resource="../config/spring/context-datasource.xml" />
+		
+	<bean id="delimitedFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
+		<property name="resource" value="classpath:files/input/player.csv"/>
+		<!-- 파싱한 String line을 오브젝트로 변환한다. -->
+		<property name="lineMapper">
+			<!-- LineMapper를 DefaultLineMapper로 설정 -->
+			<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+				<!-- String line을 LineTokenizer#tokenize() method에 전달하여 FieldSet 오브젝트로 변환하는 역할은 한다. -->
+				<property name="lineTokenizer">
+					<!-- 
+						player.csv 리소스파일은 delimiter로 구분된 데이터의 집합체이므로 LineTokenizer로 DelimitedLineTokenizer를 사용해
+						파싱된 각각의 데이터에 대한 meta 정보 및 delimiter를 설정한다. 
+					 -->
+					<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="names" value="id, lastName, firstName, position, birthYear, debutYear" />
+						<property name="delimiter" value="," /> <!-- default value is "," -->
+					</bean>
+				</property>
+				<!-- LineTokenizer에 의해 리턴된 FieldSet 오브젝트를 PlayerBean 오브젝트로 변환하는 역할을 한다. -->
+				<property name="fieldSetMapper">
+					<!-- FieldSetMapper 인터페이스의 구현체 -->
+					<bean class="myspring.batch.reader.PlayerFieldSetMapper"/>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	
+    <!-- 7. Define FlatFileItemReader to read input from fixed-length csv file -->
+    <bean id="fixedFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
+		<property name="resource" value="classpath:files/input/order.csv"/>
+    	
+    	<property name="lineMapper">
+    		<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+    			<property name="lineTokenizer">
+					<!-- order.csv 리소스파일은 고정길이 데이터의 집합체이므로 LineTokenizer로 FixedLengthTokenizer를 사용한다. -->
+    				<bean class="org.springframework.batch.item.file.transform.FixedLengthTokenizer">
+    					<property name="names" value="isbn, quantity, price, customer" />
+    					<property name="columns" value="1-12, 13-15, 16-20, 21-29" />   				
+    				</bean>
+    			</property>
+    			<property name="fieldSetMapper">
+    				<bean class="myspring.batch.reader.OrderFieldSetMapper" />
+    			</property>
+    		</bean>
+    	</property>    
+    </bean>
+    
+    <!-- 8. define database dao for writer -->
+    <bean id="playerDao" class="myspring.batch.dao.PlayerDao">
+    	<property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    
+    <bean id="orderDao" class="myspring.batch.dao.OrderDao">
+    	<property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    
+    <!-- 9. define ItemWriter for PlayerBean and GameBean -->
+    <bean id="dbPlayerWriter" class="myspring.batch.writer.PlayerWriter">
+    	<property name="dao" ref="playerDao" />
+    </bean>
+    
+    <bean id="dbOrderWriter" class="myspring.batch.writer.OrderWriter">
+    	<property name="dao" ref="orderDao" />
+    </bean>  
+	
+	<job id="fileToDBJob"  xmlns="http://www.springframework.org/schema/batch">
+		<step id="delimitedFileToDBStep" next="fixedFileToDBStep">
+			<tasklet>
+				<chunk reader="delimitedFileItemReader" writer="dbPlayerWriter" commit-interval="2"/>
+			</tasklet>
+		</step>
+		<step id="fixedFileToDBStep">
+			<tasklet>
+				<chunk reader="fixedFileItemReader" writer="dbOrderWriter" commit-interval="2"/>
+			</tasklet>
+		</step>
+	</job>
+		
+	<!-- Custom Job Launcher Class -->
+	<bean id="jobRuntime" class="myspring.batch.launcher.JobRuntime">
+		<property name="jobLauncher" ref="jobLauncher"/>
+		<property name="job" ref="fileToDBJob"/>
+	</bean>
+</beans>

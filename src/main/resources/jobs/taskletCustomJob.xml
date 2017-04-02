@@ -22,23 +22,23 @@
 	<bean id="taskletCustomJobListener" class="myspring.batch.listener.TaskletCustomJobListener"/>
 	<bean id="taskletCustomStepListener" class="myspring.batch.listener.TaskletCustomStepListener"/>
 	
-	<batch:job id="taskletCustomJob">
-		<batch:step id="taskletCustomHelloStep" next="taskletCustomByeStep">
-			<batch:tasklet ref="taskletCustomHelloTask"/>
-			<batch:listeners>
-				<batch:listener ref="taskletCustomStepListener"/>
-			</batch:listeners>
-		</batch:step>
-		<batch:step id="taskletCustomByeStep">
-			<batch:tasklet ref="taskletCustomByeTask"/>
-			<batch:listeners>
-				<batch:listener ref="taskletCustomStepListener"/>
-			</batch:listeners>
-		</batch:step>
-		<batch:listeners>
-			<batch:listener ref="taskletCustomJobListener"/>
-		</batch:listeners>
-	</batch:job>
+	<job id="taskletCustomJob"  xmlns="http://www.springframework.org/schema/batch">
+		<step id="taskletCustomHelloStep" next="taskletCustomByeStep">
+			<tasklet ref="taskletCustomHelloTask"/>
+			<listeners>
+				<listener ref="taskletCustomStepListener"/>
+			</listeners>
+		</step>
+		<step id="taskletCustomByeStep">
+			<tasklet ref="taskletCustomByeTask"/>
+			<listeners>
+				<listener ref="taskletCustomStepListener"/>
+			</listeners>
+		</step>
+		<listeners>
+			<listener ref="taskletCustomJobListener"/>
+		</listeners>
+	</job>
 		
 	<!-- Custom Job Launcher Class -->
 	<bean id="jobRuntime" class="myspring.batch.launcher.JobRuntime">
