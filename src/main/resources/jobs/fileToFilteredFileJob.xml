@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <beans xmlns="http://www.springframework.org/schema/beans"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 	 
+	 xmlns:aop="http://www.springframework.org/schema/aop"
+	 xmlns:tx="http://www.springframework.org/schema/tx" 
+       xmlns:p="http://www.springframework.org/schema/p"
+	 xmlns:batch="http://www.springframework.org/schema/batch"
+	 xmlns:task="http://www.springframework.org/schema/task"
+	 xmlns:context="http://www.springframework.org/schema/context"
+	 xsi:schemaLocation="
+	    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+	    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+	    http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<import resource="../config/spring/context-batch.xml" />
+	<import resource="../config/spring/context-datasource.xml" />
+	
+	<!-- ItemReader -->
+	<bean id="ipFileReader" class="org.springframework.batch.item.file.FlatFileItemReader">
+	    <property name="resource" value="classpath:files/input/iplist.txt"/>
+	    <property name="lineMapper">
+	        <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+	            <property name="lineTokenizer">
+	                <bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+	                    <property name="names" value="ip"/>
+	                </bean>
+	            </property>
+	            <property name="fieldSetMapper">
+	                <bean class="myspring.batch.reader.IpInfoFieldSetMapper"/>
+	            </property>
+	        </bean>
+	    </property>
+	</bean>
+	
+    <!-- ItemProcessor -->
+    <bean id="ipProcessor" class="myspring.batch.processor.IpFilterProcessor" />
+    
+	<!-- ItemWriter -->
+	<bean id="filteredIpFileWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+		<property name="resource" value="file:src/main/resources/files/output/ip_filtered.csv"/> <!-- 절대경로 : file://CNProjectHome/eclipse/eclipse-jee-neon-2/workspace/myspring/src/main/resources/files/output/ -->
+	    <property name="lineAggregator">
+	        <bean class="org.springframework.batch.item.file.transform.PassThroughLineAggregator"/>
+	    </property>
+	</bean>
+	
+	<bean id="unfilteredIpFileWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+	    <property name="resource" value="file:src/main/resources/files/output/ip_unfiltered.csv"/>
+	    <property name="lineAggregator">
+	        <bean class="org.springframework.batch.item.file.transform.PassThroughLineAggregator"/>
+	    </property>
+	</bean>
+	
+	<bean id="ipClassifierFileWriter" class="org.springframework.batch.item.support.ClassifierCompositeItemWriter">
+	    <property name="classifier">
+	        <bean class="myspring.batch.writer.IpClassfier">
+	            <property name="writerMap">
+	                <map>
+	                    <entry key="true" value-ref="filteredIpFileWriter"/>
+	                    <entry key="false" value-ref="unfilteredIpFileWriter"/>
+	                </map>
+	            </property>
+	        </bean>
+	    </property>
+	</bean>
+
+	<job id="fileToFilteredFileJob"  xmlns="http://www.springframework.org/schema/batch">
+	    <step id="simpleStep">
+	        <tasklet>
+	            <chunk reader="ipFileReader" processor="ipProcessor" writer="ipClassifierFileWriter" commit-interval="10">
+	                <streams>
+	                    <stream ref="filteredIpFileWriter"/>
+	                    <stream ref="unfilteredIpFileWriter"/>
+	                </streams>
+	            </chunk>
+	        </tasklet>
+	    </step>
+	</job>
+		
+	<!-- Custom Job Launcher Class -->
+	<bean id="jobRuntime" class="myspring.batch.launcher.JobRuntime">
+		<property name="jobLauncher" ref="jobLauncher"/>
+		<property name="job" ref="fileToFilteredFileJob"/>
+	</bean>
+</beans>
