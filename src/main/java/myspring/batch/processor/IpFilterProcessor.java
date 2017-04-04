@@ -8,7 +8,7 @@ public class IpFilterProcessor implements ItemProcessor<IpInfo, IpInfo> {
 
 	@Override
 	public IpInfo process(IpInfo item) throws Exception {
-        if (item.getIp().startsWith("210.")) {
+        if (item.getIp().startsWith("219.")) {
             item.setFiltered(true);
         }
 		return item;

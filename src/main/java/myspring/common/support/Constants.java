@@ -80,9 +80,9 @@ public final class Constants {
      */
     public final static String FIRST_IN_DS_NM = "_FIRST_IN_DS_NM_";
     
-    public final static String MIPLATFORM_PAGE_URL = "_MIPLATFORM_PAGE_URL_";
+    public final static String PLATFORM_PAGE_URL = "_PLATFORM_PAGE_URL_";
     
-    public final static String MIPLATFORM_MENU_ID = "_MIPLATFORM_MENU_ID_";
+    public final static String PLATFORM_MENU_ID = "_PLATFORM_MENU_ID_";
     
     public final static String REXPERT_FILE_ID = "_REXPERT_FILE_ID_";
 
