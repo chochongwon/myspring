@@ -14,9 +14,11 @@
 	    http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
 	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 	
+	<!-- 
 	<import resource="../config/spring/context-batch.xml" />
 	<import resource="../config/spring/context-datasource.xml" />
-	
+	 -->
+	 
 	<!-- ItemReader -->
 	<bean id="ipFileReader" class="org.springframework.batch.item.file.FlatFileItemReader">
 	    <property name="resource" value="classpath:files/input/iplist.txt"/>

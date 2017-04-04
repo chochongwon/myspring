@@ -14,9 +14,11 @@
 	    http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
 	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 	
+	<!-- 
 	<import resource="../config/spring/context-batch.xml" />
 	<import resource="../config/spring/context-datasource.xml" />
-		    
+	 -->
+	 
     <!-- 6. Define JdbcCursorItemReader -->
     <bean id="dbPagingReader" class="org.springframework.batch.item.database.JdbcPagingItemReader">
     	<property name="dataSource" ref="dataSource" />

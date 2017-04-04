@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
  
 <!-- 맵핑될 DAO 인터페이스의 Full name 을 줍니다. --> 
-<mapper namespace="myspring.app.dao.Board1DAO"> 
+<mapper namespace="myspring.sample.dao.Board1DAO"> 
 	<!-- id 속성은 DAO 의 메소드와 같아야 한다. 여기의 boardVO 는 mybatis-confg.xml 에 Alias 되어 있습니다. --> 
 	<select id="selectOneBoard1" resultType="board1VO">
 	SELECT IDX 
@@ -46,7 +46,7 @@
 		}
 	</select>
 	
-	<resultMap id="procVO1"  type="myspring.app.vo.Board1VO"> 
+	<resultMap id="procVO1"  type="myspring.sample.vo.Board1VO"> 
 		<result property="idx" column="NUM"/> 
 		<result property="parent_idx" column="PARENT_IDX"/> 
 		<result property="title" column="TITLE"/> 
@@ -64,7 +64,7 @@
 		}
 	</select>
 	
-	<resultMap id="procVO2"  type="myspring.app.vo.Board1VO"> 
+	<resultMap id="procVO2"  type="myspring.sample.vo.Board1VO"> 
 		<result property="idx" column="IDX"/> 
 		<result property="parent_idx" column="PARENT_IDX"/> 
 		<result property="title" column="TITLE"/> 

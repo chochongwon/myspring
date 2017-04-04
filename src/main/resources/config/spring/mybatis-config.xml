@@ -15,8 +15,8 @@
 	</settings>
 	
 	<typeAliases>
-		<typeAlias alias="board1VO" type="myspring.app.vo.Board1VO" />
-		<typeAlias alias="board1TransferVO" type="myspring.app.vo.Board1TransferVO" />
+		<typeAlias alias="board1VO" type="myspring.sample.vo.Board1VO" />
+		<typeAlias alias="board1TransferVO" type="myspring.sample.vo.Board1TransferVO" />
 	</typeAliases>
 	
     <typeHandlers>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd 
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd 
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd 
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd "
+	default-autowire="byType">
+    
+    <context:load-time-weaver/>
+    <context:annotation-config/>
+
+    <bean id="appProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <list>
+                <value>classpath:config/properties/app.properties</value>
+                <value>classpath:config/properties/common.properties</value>
+                <value>classpath:config/properties/jdbc.properties</value>
+            </list>
+        </property>
+        <property name="singleton" value="true" />
+    	<property name="ignoreResourceNotFound" value="true"/>
+    </bean> 
+    
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    	<property name="properties" ref="appProperties"/>
+    	<property name="ignoreUnresolvablePlaceholders" value="true"/>
+    	<property name="ignoreResourceNotFound" value="true"/>
+    </bean>
+
+    <bean id="systemConfig" class="myspring.common.config.SystemConfiguration">
+        <property name="properties" ref="appProperties"/>
+    </bean>
+    
+    <bean id="stringTemplateApplyer" class="myspring.common.config.SystemConfigTemplateApplyer">
+        <property name="properties" ref="appProperties"/>
+    </bean>
+    
+    <!-- 
+    <bean id="attachFile" class="myspring.common.file.AttachFile" scope="prototype">
+    </bean>
+     -->
+     
+    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" autowire="no">
+        <property name="corePoolSize" value="30" />
+        <property name="maxPoolSize" value="30" />
+        <property name="queueCapacity" value="30" />
+    </bean>
+    
+    <!-- Async Method Invoker -->
+    <bean id="asyncMethodInvoker" class="myspring.common.scheduling.AsyncMethodInvoker" autowire="no">
+        <property name="taskExecutor" ref="taskExecutor"/>
+    </bean>
+
+    <!-- Sync Method Invoker -->
+    <bean id="syncMethodInvoker" class="myspring.common.scheduling.MethodInvoker" autowire="no">
+        <property name="taskExecutor">
+            <bean class="org.springframework.core.task.SyncTaskExecutor"/>
+        </property>
+    </bean>
+    
+    <!-- Batch1 Remote Job Registry -->
+    <bean id="remoteJobRegistry" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean" autowire="no" depends-on="appProperties">
+        <property name="serviceUrl" value="http://localhost:8080/myspring/remote/jobRegistry" />
+        <property name="serviceInterface" value="myspring.common.batch.core.SimpleJobRegistry" />
+    </bean>
+    
+    <!-- Batch1 Job Runner Remote Invoker -->
+    <bean id="remoteJobRunner" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean" autowire="no" depends-on="appProperties">
+        <property name="serviceUrl" value="http://localhost:8080/myspring/remote/jobRunner" />
+        <property name="serviceInterface" value="myspring.common.batch.launch.JobRunner" />
+    </bean>
+
+    <!-- Batch1 Remote Scheduler -->
+    <bean id="remoteQuartzScheduler" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean" autowire="no" depends-on="appProperties">
+        <property name="serviceUrl" value="http://localhost:8080/myspring/remote/quartzScheduler" />
+        <property name="serviceInterface" value="org.quartz.Scheduler" />
+    </bean>
+
+    <!-- Batch2 Remote Job Registry -->
+    <bean id="remoteJobRegistry2" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean" autowire="no" depends-on="appProperties">
+        <property name="serviceUrl" value="http://localhost:8080/myspring/remote/jobRegistry" />
+        <property name="serviceInterface" value="myspring.common.batch.core.SimpleJobRegistry" />
+    </bean>
+    
+    <!-- Batch2 Job Runner Remote Invoker -->
+    <bean id="remoteJobRunner2" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean" autowire="no" depends-on="appProperties">
+        <property name="serviceUrl" value="http://localhost:8080/myspring/remote/jobRunner" />
+        <property name="serviceInterface" value="myspring.common.batch.launch.JobRunner" />
+    </bean>
+
+    <!-- Batch2 Remote Scheduler -->
+    <bean id="remoteQuartzScheduler2" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean" autowire="no" depends-on="appProperties">
+        <property name="serviceUrl" value="http://localhost:8080/myspring/remote/quartzScheduler" />
+        <property name="serviceInterface" value="org.quartz.Scheduler" />
+    </bean>
+    
+    <bean id="applicationSessionManager" class="myspring.common.session.ApplicationSessionManager">
+    </bean>
+
+    <bean id="stringEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+        <property name="algorithm">
+            <value>PBEWithMD5AndDES</value>
+        </property>
+        <property name="password">
+            <value>betterthannothing</value>
+        </property>
+        <property name="stringOutputType">
+            <value>hexadecimal</value>
+        </property>
+    </bean>
+    
+    <bean id="loginValidator" class="myspring.common.support.LoginValidatorSupport">
+    </bean>
+    
+    
+</beans>

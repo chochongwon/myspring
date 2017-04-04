@@ -57,6 +57,49 @@
 		<url-pattern>*.do</url-pattern>
 	</servlet-mapping>	
 		
+    <servlet>
+        <servlet-name>jobRunnerExporter</servlet-name>
+        <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>jobRunnerExporter</servlet-name>
+        <url-pattern>/remote/jobRunner</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>jobRegistryExporter</servlet-name>
+        <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
+    </servlet>    
+    
+    <servlet-mapping>
+        <servlet-name>jobRegistryExporter</servlet-name>
+        <url-pattern>/remote/jobRegistry</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>quartzSchedulerExporter</servlet-name>
+        <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
+    </servlet>    
+    
+    <servlet-mapping>
+        <servlet-name>quartzSchedulerExporter</servlet-name>
+        <url-pattern>/remote/quartzScheduler</url-pattern>
+    </servlet-mapping>    
+ 
+ 	<!-- 
+    <servlet>
+        <servlet-name>FCKConnectorServlet</servlet-name>
+        <servlet-class>myspring.common.fckeditor.FCKConnectorServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>FCKConnectorServlet</servlet-name>
+        <url-pattern>/fckeditor/editor/filemanager/connectors/*</url-pattern>
+    </servlet-mapping>
+     -->     
+         
     <!-- apache Tiles -->
 	<servlet>
 		<servlet-name>tilesServlet</servlet-name>
@@ -99,7 +142,7 @@
 	<!-- 이것은 필터가 servlet, jsp 뿐만아니라 이미지와 같은 모든 자원의 요청에도 호출된다. 실제 사용시에는 필요한 자원만 맵핑되도록 한다. -->    
   	<filter>
         <filter-name>testFilter</filter-name>
-        <filter-class>myspring.app.filter.TestFilter</filter-class>
+        <filter-class>myspring.sample.filter.TestFilter</filter-class>
 	    <init-param>
 	        <param-name>encoding</param-name>
 	        <param-value>UTF-8</param-value>

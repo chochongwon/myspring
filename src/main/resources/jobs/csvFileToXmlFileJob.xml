@@ -14,9 +14,11 @@
 	    http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
 	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 	
+	<!-- 
 	<import resource="../config/spring/context-batch.xml" />
 	<import resource="../config/spring/context-datasource.xml" />
-	
+	 -->
+	 
 	<bean id="report" class="myspring.batch.model.Report" scope="prototype" />
 	<bean id="itemProcessor" class="myspring.batch.processor.ReportItemProcessor" />
 	

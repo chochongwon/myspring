@@ -10,6 +10,7 @@ public class fileToDBJobRun {
 	private static final Logger logger = Logger.getLogger(JobRuntime.class);
 
 	public static void main(String[] args) {
+		
 		try {
 			String[] springConfig  =
 				{
