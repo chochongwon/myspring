@@ -96,6 +96,20 @@
         <property name="dataSource" ref="dataSource" />
     </bean>
     
+    <bean id="nativeJdbcExtractor" class="org.springframework.jdbc.support.nativejdbc.SimpleNativeJdbcExtractor" lazy-init="true" autowire="no" />
+    
+    <bean id="oracleLobhandler" class="org.springframework.jdbc.support.lob.OracleLobHandler" lazy-init="true"  autowire="no">
+        <property name="nativeJdbcExtractor">
+            <ref local="nativeJdbcExtractor"/>
+        </property>
+    </bean>
+    
+    <bean id="mssqlLobhandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" lazy-init="true"  autowire="no">
+    </bean>
+
+    <bean id="mysqlLobhandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" lazy-init="true"  autowire="no">
+    </bean>
+    
 	<!-- 어노테이션 기반의 트랜잭션을 사용한다. -->
 	<tx:annotation-driven transaction-manager="transactionManager" />
     <!-- <tx:annotation-driven transaction-manager="transactionManager" mode="aspectj"/>  -->   

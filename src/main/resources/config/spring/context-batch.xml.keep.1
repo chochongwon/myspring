@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <beans xmlns="http://www.springframework.org/schema/beans"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 	 
+	 xmlns:aop="http://www.springframework.org/schema/aop"
+	 xmlns:tx="http://www.springframework.org/schema/tx" 
+       xmlns:p="http://www.springframework.org/schema/p"
+	 xmlns:batch="http://www.springframework.org/schema/batch"
+	 xmlns:task="http://www.springframework.org/schema/task"
+	 xmlns:context="http://www.springframework.org/schema/context"
+	 xsi:schemaLocation="
+	    http://www.springframework.org/schema/beans 
+	    http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	    http://www.springframework.org/schema/aop 
+	    http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+	    http://www.springframework.org/schema/task 
+	    http://www.springframework.org/schema/task/spring-task-4.3.xsd
+	    http://www.springframework.org/schema/batch 
+	    http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+	    http://www.springframework.org/schema/context 
+	    http://www.springframework.org/schema/context/spring-context-4.3.xsd"
+	default-autowire="byType">
+        
+ 	<!-- stored job-meta in database -->    
+ 	<bean id="jobRepository" class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean">
+ 		<property name="transactionManager" ref="transactionManager" />
+ 		<property name="dataSource" ref="dataSource" />
+ 		<property name="tablePrefix" value="BATCH_" />
+ 		<property name="isolationLevelForCreate" value="READ_COMMITTED"/> <!-- ISOLATION_SERIALIZABLE -->
+ 		<property name="databaseType" value="ORACLE" />
+ 	</bean>
+ 	
+    <bean id="jobExplorer" class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean"
+        p:lobHandler-ref="oracleLobhandler"
+        p:dataSource-ref="dataSource" />
+
+    <bean id="jobOperator" class="org.springframework.batch.core.launch.support.SimpleJobOperator"
+        p:jobLauncher-ref="jobLauncher" p:jobExplorer-ref="jobExplorer"
+        p:jobRepository-ref="jobRepository" p:jobRegistry-ref="jobRegistry" />
+
+    <bean id="jobParametersConverter" class="myspring.common.batch.core.CustomJobParametersConverter" />
+
+    <!-- <bean id="logAdvice" class="org.springframework.batch.sample.common.LogAdvice" /> -->
+    <!-- <bean id="eventAdvice" class="org.springframework.batch.sample.jmx.StepExecutionApplicationEventAdvice" /> -->
+
+    <bean id="jobRegistry" class="myspring.common.batch.core.SimpleBatchJobRegistryImpl">
+        <property name="serverId" value="mybatch"/> <!-- {batch.server.id} -->
+    </bean>
+
+    <bean class="org.springframework.batch.core.configuration.support.AutomaticJobRegistrar">
+        <property name="applicationContextFactories">
+            <bean class="org.springframework.batch.core.configuration.support.ClasspathXmlApplicationContextsFactoryBean">
+                <property name="resources" value="classpath:jobs/**/*Job.xml"/>
+            </bean>
+        </property>
+        <property name="jobLoader">
+            <bean class="org.springframework.batch.core.configuration.support.DefaultJobLoader">
+                <property name="jobRegistry" ref="jobRegistry"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- JobRegistry Remote Exporter -->
+    <bean id="jobRegistryExporter" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter" autowire="no">
+        <property name="service" ref="jobRegistry" />
+        <property name="serviceInterface" value="com.cn.framework.batch.core.SimpleJobRegistry" />
+    </bean> 
+    
+    <!-- Async Job Launcher -->
+    <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+        <property name="jobRepository" ref="jobRepository" />
+        <property name="taskExecutor" ref="taskExecutor"/>
+    </bean>
+
+    <!-- Async Batch Job Runner -->
+    <bean id="jobRunner" class="myspring.common.batch.launch.SimpleBatchJobRunnerImpl">
+        <property name="jobRepository" ref="jobRepository" />
+        <property name="jobLauncher" ref="jobLauncher" />
+        <property name="jobRegistry" ref="jobRegistry" />
+        <property name="jobParametersConverter" ref="jobParametersConverter" />
+    </bean>
+
+    <!-- Job Runner Remote Exporter -->
+    <bean id="jobRunnerExporter" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter" autowire="no">
+        <property name="service" ref="jobRunner" />
+        <property name="serviceInterface" value="myspring.framework.batch.launch.JobRunner" />
+    </bean> 
+    
+</beans>
