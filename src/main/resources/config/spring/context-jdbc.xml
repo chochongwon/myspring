@@ -39,6 +39,7 @@
 		testOnReturn : true일 경우, 커넥션 풀에 커넥션을 반환할 때, 커넥션이 유효한지 검사
 		testWhileIdle : true일 경우, 비활성화 커넥션을 추출할 때, 커넥션이 유효한지 검사해서 유효하지 않은 커넥션을 풀에서 제거. 
 	 -->
+<<<<<<< HEAD
     <bean id="dataSourceSpied" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<!-- 
 		<property name="driverClassName" value="${jdbc.driverClassName}" />
@@ -46,6 +47,9 @@
 		<property name="username" value="${jdbc.username}" />
 		<property name="password" value="${jdbc.password}" />
 		 -->
+=======
+    <bean id="dataSourceSpied" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"  depends-on="appProperties">
+>>>>>>> branch 'master' of https://github.com/chochongwon/myspring.git
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
 		<property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521:xe" />
 		<property name="username" value="xeuser" />
