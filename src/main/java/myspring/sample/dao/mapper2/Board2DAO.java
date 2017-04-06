@@ -1,4 +1,4 @@
-package myspring.sample.dao;
+package myspring.sample.dao.mapper2;
 
 import java.util.List;
 

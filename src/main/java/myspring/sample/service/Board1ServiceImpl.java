@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import myspring.sample.dao.mapper2.Board1DAO;
 import myspring.sample.service.Board1Service;
 import myspring.sample.vo.Board1TransferVO;
 import myspring.sample.vo.Board1VO;
-import myspring.sample.dao.Board1DAO;
 
 @Service("board1Service")
 public class Board1ServiceImpl implements Board1Service {

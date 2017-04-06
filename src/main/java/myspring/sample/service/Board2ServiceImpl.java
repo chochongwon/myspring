@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import myspring.sample.dao.Board2DAO;
+import myspring.sample.dao.mapper2.Board2DAO;
 import myspring.sample.vo.Board2VO;
 
 

@@ -6,7 +6,9 @@ import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
+@Component("commonUtils")
 public class CommonUtils {
 	private static final Logger log = Logger.getLogger(CommonUtils.class);
     

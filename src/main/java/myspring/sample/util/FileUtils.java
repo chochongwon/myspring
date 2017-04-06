@@ -1,6 +1,11 @@
 package myspring.sample.util;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -130,4 +135,40 @@ public class FileUtils {
 	    }
 	    return list;
 	}
+
+	public static void writer(String fileName, byte[] bytes, boolean flush) throws IOException {
+      Writer out = new FileWriter(fileName, true);
+      long a = System.currentTimeMillis();
+      for (byte j : bytes) {
+        out.write(j);
+        if (flush) out.flush();
+      }
+      out.close();
+      System.out.println("FileWriter with" + (flush? "":"out") + " flushing: " +
+          (System.currentTimeMillis() - a));
+    }
+
+    public static void writer(String fileName, String text, boolean flush) throws IOException {
+      Writer out = new FileWriter(fileName, true);
+      //Writer out = new OutputStreamWriter(new FileOutputStream(fileName, true), "MS949");
+      long a = System.currentTimeMillis();
+      out.write(text);
+      if (flush) out.flush();
+      out.close();
+      System.out.println("FileWriter with" + (flush? "":"out") + " flushing: " +
+          (System.currentTimeMillis() - a));      
+    }
+    
+    public static void stream(String fileName, byte[] bytes, boolean flush) throws IOException {
+      OutputStream out = new FileOutputStream(fileName, true);
+      long a = System.currentTimeMillis();
+      for (byte j : bytes) {
+        out.write(j);
+        if (flush) out.flush();
+      }
+      out.close();
+      System.out.println("FileOutputStream with" + (flush? "":"out") + " flushing: " +
+          (System.currentTimeMillis() - a));
+    }
+    
 }

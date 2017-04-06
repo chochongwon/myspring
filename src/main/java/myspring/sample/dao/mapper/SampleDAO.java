@@ -1,11 +1,11 @@
-package myspring.sample.dao;
+package myspring.sample.dao.mapper;
 
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import myspring.sample.common.AbstractDAO;
+import myspring.sample.dao.mapper.AbstractDAO;
 
 // @Repository 은 이클래스가 DAO임을 선언하고 sampleDAO 라는 이름으로 작성한다.
 // sampleServiceImpl에서 @Resource(name="sampleDAO")로 bean을 수동으로 등록하였고, 

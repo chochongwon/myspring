@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import myspring.sample.dao.CommonDAO;
+import myspring.sample.dao.mapper.CommonDAO;
  
 @Service("commonService")
 public class CommonServiceImpl implements CommonService{

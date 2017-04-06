@@ -3,34 +3,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
 	xsi:schemaLocation="
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
-	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
-	
-	<!-- 지정된 베이스 패키지에서 DAO(Mapper)를 검색하여 등록한다. -->
-	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="myspring.sample.dao" />
-	</bean>
-	
-     <!-- MyBatis SqlSession -->
-	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<!-- MyBatis 설정 파일의 위치를 지정한다. -->
-		<property name="configLocation" value="classpath:config/spring/mybatis-config.xml" />
-		<!-- SQL 파일의 위치를 지정한다. -->
-		<property name="mapperLocations" >
-			<list>
-				<value>classpath:mapper/*_SQL.xml</value>
-				<value>classpath:mapper/**/*_SQL.xml</value>
-			</list>
-		</property>
-	</bean>	
-	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
-        <constructor-arg index="0" ref="sqlSession"/>
-		<!-- <constructor-arg name="sqlSessionFactory" ref="sqlSession" /> -->
-    </bean>      
-	
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+	http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd">
+	    	
     <bean id="nativeJdbcExtractor" class="org.springframework.jdbc.support.nativejdbc.SimpleNativeJdbcExtractor" lazy-init="true" autowire="no" />
     
     <bean id="oracleLobhandler" class="org.springframework.jdbc.support.lob.OracleLobHandler" lazy-init="true"  autowire="no">
@@ -47,8 +26,105 @@
     </bean>
       -->
       
-    <bean id="board2DAO" class="myspring.sample.dao.Board2DAOImpl">
+     <!-- MyBatis SqlSession -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean" autowire="no" primary="true"> 
+		<property name="dataSource" ref="dataSource" />
+		<!-- MyBatis 설정 파일의 위치를 지정한다. -->
+		<property name="configLocation" value="classpath:config/spring/mybatis-config.xml" />
+		<!-- SQL 파일의 위치를 지정한다. -->
+		<property name="mapperLocations" >
+			<list>
+				<value>classpath:mapper/*_SQL.xml</value>
+				<value>classpath:mapper/**/*_SQL.xml</value>
+			</list>
+		</property>
+	</bean>	
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
+        <constructor-arg index="0" ref="sqlSession"/>
+    </bean>      
+	   
+	<bean id="sqlSession_mapper2" class="org.mybatis.spring.SqlSessionFactoryBean" autowire="no" primary="true"> 
+		<property name="dataSource" ref="dataSource_mapper2" />
+		<!-- MyBatis 설정 파일의 위치를 지정한다. -->
+		<property name="configLocation" value="classpath:config/spring/mybatis-config.xml" />
+		<!-- SQL 파일의 위치를 지정한다. -->
+		<property name="mapperLocations" >
+			<list>
+				<value>classpath:mapper2/*_SQL.xml</value>
+				<value>classpath:mapper2/**/*_SQL.xml</value>
+			</list>
+		</property>
+	</bean>	
+	<bean id="sqlSessionTemplate_mapper2" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
+        <constructor-arg index="0" ref="sqlSession_mapper2"/>
+		<!-- <constructor-arg name="sqlSessionFactory" ref="sqlSession" /> -->
+    </bean>  
+	<!-- 지정된 베이스 패키지에서 DAO(Mapper)를 검색하여 등록한다. -->
+	<!-- 
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="myspring.sample.dao" />
+	</bean>
+	-->
+	<!-- 
+	<bean id="userMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"> 
+	     <property name="mapperInterface" value="com.google.center.repository.GoolgeGatewayDAO" />	
+	     <property name="sqlSessionFactory" ref="sqlSession" /> 
+	     <property name="sqlSessionTemplate" ref="sqlSessionTemplate" /> 
+	</bean>
+	 -->
+	 
+     <!--    
+    <bean id="commonDAO" class="myspring.sample.dao.CommonDAO">
+    </bean>
+    
+    <bean id="sampleDAO" class="myspring.sample.dao.SampleDAO">
+    </bean>
+    
+    <bean id="board1DAO" class="myspring.sample.dao.Board1DAOImpl">
         <property name="sqlSession" ref="sqlSessionTemplate" />
     </bean>
-      
+    
+    <bean id="board2DAO" class="myspring.sample.dao.board2.Board2DAOImpl">
+        <property name="sqlSession" ref="sqlSessionTemplate" />
+    </bean>
+     	 
+    <bean id="sqlSessionDAO" class="myspring.common.dao.SqlSessionDAO" autowire="no" depends-on="sqlSession">
+        <property name="sqlSession" ref="sqlSession"/>
+    </bean>
+    -->
+    
+    <mybatis:scan base-package="myspring.sample.dao.mapper" factory-ref="sqlSession"  />
+    <mybatis:scan base-package="myspring.sample.dao.mapper2" factory-ref="sqlSession_mapper2"  />
+    
+	<bean id="board1DAO" class="org.mybatis.spring.mapper.MapperFactoryBean"> 
+	     <property name="mapperInterface" value="myspring.sample.dao.mapper2.Board1DAO" />	
+	     <property name="sqlSessionFactory" ref="sqlSession_mapper2" /> 
+	     <property name="sqlSessionTemplate" ref="sqlSessionTemplate_mapper2" /> 
+	</bean>
+	
+    <bean id="board2DAO" class="myspring.sample.dao.mapper2.Board2DAOImpl">
+        <property name="sqlSessionTemplate" ref="sqlSessionTemplate_mapper2" />
+    </bean>
+    
+    <bean id="sqlSessionDAO" class="myspring.common.dao.SqlSessionDAO">
+        <property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+    </bean>
+     
+     <!-- 
+     	AutowiredAnnotationBeanPostProcessor 빈을 생성하면 Autowired 어노테이션 선언시 해당빈을 찾아 초기화 될 것이다.
+     	Autowired 순서
+		1. Type을 확인한다.
+			Type이 하나만 있으면, 해당 Bean을 사용한다.
+			Type이 여러개 있으면, 다음 단계로 이동한다.
+		2. Name이 동일한지 확인한다.
+			Name이 동일하면, 해당 Bean을 사용한다.
+			Name과 동일한 것이 없으면, 다음 단계로 이동한다.
+		3. Qualifier를 통해서 연관되는 Bean이 있는지 확인한다.
+			Qualifier와 동일한 것이 있으면, 해당 Bean을 사용한다.
+			Qualifier와 동일한 것이 없으면, 오류를 출력할 것으로 보인다.
+			xml의 빈 선언부에 <qualifier value="이름"/> 를 추가하고 java에서 @Qualifier("이름") 로 선언하면 
+			동일 Type이나 name 이 여러개 존재하여도 해당빈을 명시적으로 찾아준다.
+      -->
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+    <context:annotation-config/> <!-- 모든 pocessor를 한번에 사용할 수 있다. -->
 </beans>

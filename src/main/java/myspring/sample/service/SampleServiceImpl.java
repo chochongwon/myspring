@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import myspring.sample.dao.SampleDAO;
+import myspring.sample.dao.mapper.SampleDAO;
 import myspring.sample.util.FileUtils;
 
 // @Service 은 Service객체임을 선언한다.

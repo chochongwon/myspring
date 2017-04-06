@@ -1,14 +1,15 @@
-package myspring.sample.dao;
+package myspring.sample.dao.mapper2;
 
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.SqlSession;
 
 import myspring.sample.vo.Board1TransferVO;
 import myspring.sample.vo.Board1VO;
 
-public interface Board1DAO {
+public interface Board1DAO {    
 	List<Board1VO> selectListBoard1() throws Exception;
 	Board1VO selectOneBoard1(@Param(value = "idx") Integer idx) throws Exception;
 	

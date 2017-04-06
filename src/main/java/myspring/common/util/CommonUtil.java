@@ -11,6 +11,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import myspring.common.enums.RowType;
+
 import static myspring.common.support.Constants.REXPERT_FILE_ID;
 import static myspring.common.support.Constants.ROW_TYPE_COLUMN;
 
@@ -113,4 +115,186 @@ public abstract class CommonUtil {
         }
     }
 
+    /**
+     * RowType 머리글자를 받아 RowType enum 객체를 리턴한다.
+     *
+     * @param initialLetter - RowType 머리글자
+     *                        <ul><li>Normal : N</li><li>Insert : I</li><li>Update : U</li><li>Delete : D</li></ul>
+     * @return 머리글자에 대응하는 RowType 객체, 잘못하면 RowType.NORMAL
+     */
+    public static RowType getRowType(String initialLetter) {
+        for(RowType i : RowType.values()) {
+            if(i.initialLetter.equals(initialLetter)) {
+                return i;
+            }
+        }
+
+        return  RowType.NORMAL;
+    }
+
+    /**
+     * Dataset Row 의 RowType 리턴
+     * @param row Dataset List 의 Row 정보를 담은 Map 객체
+     * @return RowType 객체
+     */
+    public static RowType getRowType(Map row) {
+        return getRowType((String)row.get(ROW_TYPE_COLUMN));
+    }
+
+    /**
+     * Dataset List 의 특정 RowType 만 걸러낸다.
+     * 주의 : Shallow Copy 가 적용된다. Deep Copy 를 원하는 경우 cloneRowTypeList 메소드를 사용하자.
+     *
+     * @param list - Dataset List
+     * @param type - 골라낼 RowType
+     * @return 지정된 RowType 에 해당되는 Row로만 구성된 List 객체
+     */
+    public static List<Map> getRowTypeList(List<Map> list, RowType ... types) {
+        List<Map> result = new ArrayList<Map>();
+        for(Map row : list) {
+            RowType rowType = CommonUtil.getRowType((String)row.get(ROW_TYPE_COLUMN));
+            for(RowType tt : types) {
+                if(rowType.equals(tt)) {
+                    result.add(row);
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Dataset List 로부터 RowType.NORMAL 인 row를 제거한 리스트를 리턴한다.
+     */
+    public static List<Map> getRowTypeSafeList(List<Map> list) {
+        List<Map> result = new ArrayList<Map>();
+        for(Map row : list) {
+            RowType rowType = CommonUtil.getRowType((String)row.get(ROW_TYPE_COLUMN));
+            switch(rowType) {
+                case INSERT:
+                case UPDATE:
+                case DELETE:
+                    result.add(row);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return result;
+    }
+    /**
+     * Dataset List 로부터 RowType.INSERT 에 해당하는 row만 추출한다.
+     */
+    public static List<Map> getRowTypeInsertList(List<Map> list) {
+        return getRowTypeList(list, RowType.INSERT);
+    }
+    /**
+     * Dataset List 로부터 RowType.UPDATE 에 해당하는 row만 추출한다.
+     */
+    public static List<Map> getRowTypeUpdateList(List<Map> list) {
+        return getRowTypeList(list, RowType.UPDATE);
+    }
+    /**
+     * Dataset List 로부터 RowType.DELETE 에 해당하는 row만 추출한다.
+     */
+    public static List<Map> getRowTypeDeleteList(List<Map> list) {
+        return getRowTypeList(list, RowType.DELETE);
+    }
+    /**
+     * Dataset List 로부터 RowType.NORMAL 에 해당하는 row만 추출한다.
+     */
+    public static List<Map> getRowTypeNormalList(List<Map> list) {
+        return getRowTypeList(list, RowType.NORMAL);
+    }
+
+    /**
+     * Dataset List 의 특정 RowType 만 걸러낸 새로운 List<Map> 객체를 리턴한다.
+     * 주의 : Deep Copy 가 적용된다. Shallow Copy 를 원하는 경우 getRowTypeList 메소드를 사용하자.
+     *
+     * @param list - Dataset List
+     * @param type - 골라낼 RowType
+     * @throws IOException - DeepCopy 실패시
+     * @return 지정된 RowType 에 해당되는 Row로만 구성된 새로운 List 객체
+     */
+    public static List<Map> cloneRowTypeList(List<Map> list, RowType ... types) throws IOException {
+        List<Map> result = new ArrayList<Map>();
+        for(Map row : list) {
+            RowType rowType = CommonUtil.getRowType((String)row.get(ROW_TYPE_COLUMN));
+            for(RowType tt : types) {
+                if(rowType.equals(tt)) {
+                    Map copy = (Map)DeepCopyUtil.copy(row);
+                    result.add(copy);
+                    break;
+                }
+            }
+        }
+        return result;
+    }    
+
+    /**
+     * Dataset List 로부터 RowType.NORMAL 인 row를 제거한 새로운 리스트를 리턴한다.
+     * 주의 : Deep Copy 가 적용된다. Shallow Copy 를 원하는 경우 getRowTypeSafeList 메소드를 사용하자.
+     */
+    public static List<Map> cloneRowTypeSafeList(List<Map> list) throws IOException {
+        List<Map> result = new ArrayList<Map>();
+        for(Map row : list) {
+            RowType rowType = CommonUtil.getRowType((String)row.get(ROW_TYPE_COLUMN));
+            switch(rowType) {
+                case INSERT:
+                case UPDATE:
+                case DELETE:
+                    Map copy = (Map)DeepCopyUtil.copy(row);
+                    result.add(copy);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return result;
+    }    
+
+    /**
+     * Dataset List 로부터 RowType.INSERT 에 해당하는 row만 추출한다.
+     * 주의 : Deep Copy 가 적용된다. Shallow Copy 를 원하는 경우 getRowType 시리즈를 사용하자.
+     */
+    public static List<Map> cloneRowTypeInsertList(List<Map> list) throws IOException {
+        return cloneRowTypeList(list, RowType.INSERT);
+    }
+    /**
+     * Dataset List 로부터 RowType.UPDATE 에 해당하는 row만 추출한다.
+     * 주의 : Deep Copy 가 적용된다. Shallow Copy 를 원하는 경우 getRowType 시리즈를 사용하자.
+     */
+    public static List<Map> cloneRowTypeUpdateList(List<Map> list) throws IOException {
+        return cloneRowTypeList(list, RowType.UPDATE);
+    }
+    /**
+     * Dataset List 로부터 RowType.DELETE 에 해당하는 row만 추출한다.
+     * 주의 : Deep Copy 가 적용된다. Shallow Copy 를 원하는 경우 getRowType 시리즈를 사용하자.
+     */
+    public static List<Map> cloneRowTypeDeleteList(List<Map> list) throws IOException {
+        return cloneRowTypeList(list, RowType.DELETE);
+    }
+    /**
+     * Dataset List 로부터 RowType.NORMAL 에 해당하는 row만 추출한다.
+     * 주의 : Deep Copy 가 적용된다. Shallow Copy 를 원하는 경우 getRowType 시리즈를 사용하자.
+     */
+    public static List<Map> cloneRowTypeNormalList(List<Map> list) throws IOException {
+        return cloneRowTypeList(list, RowType.NORMAL);
+    }
+
+    public static void sort(List list, final String columnName) {
+        sort(list, columnName, true);
+    }
+    public static void sort(List list, final String columnName, final boolean isAsc) {
+        if(!CollectionUtils.isEmpty(list)) {
+            Collections.sort(list, new Comparator<Map>() {
+                public int compare(Map o1, Map o2) {
+                    String name1 = (String) o1.get(columnName);
+                    String name2 = (String) o2.get(columnName);
+                    return (isAsc) ? name1.compareTo(name2) : name2.compareTo(name1);
+                }
+            });
+        }
+    }
+    
 }

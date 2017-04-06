@@ -1,4 +1,4 @@
-package myspring.sample.common;
+package myspring.sample.dao.mapper;
 
 import java.util.HashMap;
 import java.util.List;

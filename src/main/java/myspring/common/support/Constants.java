@@ -1,5 +1,7 @@
 package myspring.common.support;
 
+import java.text.SimpleDateFormat;
+
 /**
  * 상수 선언 전용 Class.
  * JDK5의 static import 를 사용하자.
@@ -55,6 +57,26 @@ public final class Constants {
      */
     public final static String COMBO_DATA_COLUMN = "NAME";
 
+    /*
+     * ColumnInfo
+     */
+    public static final short COLTYPE_UNKNOWN = 0;
+    public static final short COLTYPE_STRING = 1;
+    public static final short COLTYPE_INT = 2;
+    public static final short COLTYPE_DECIMAL = 4;
+    public static final short COLTYPE_CURRENCY = 5;
+    public static final short COLTYPE_DATE = 8;
+    public static final short COLTYPE_BLOB = 9;
+    public static final short COLTYPE_URL = 10;
+    public static final short COLTYPE_LONG = 11;
+    public static final short COLTYPE_CHAR = 12;
+    public static final short COLTYPE_FILE = 13;
+
+    public static final String DEFAULT_DATE_FORMAT = "yyyyMMddHHmmss";
+    public static final String DEFAULT_SHORT_DATE_FORMAT = "yyyyMMdd";
+    public static final SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat("yyyyMMddHHmmss");
+    public static final SimpleDateFormat DEFAULT_SHORT_DATE_FORMATTER = new SimpleDateFormat("yyyyMMdd");
+    
     /**
      * 나모 관리번호
      */

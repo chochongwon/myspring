@@ -32,18 +32,24 @@
 		minIdle : 사용되지 않고 풀에 저장될 수 있는 최소 커넥션 개수
 		maxWait : 풀에 커넥션이 존재하지 않을 때, 커넥션이 풀에 다시 리턴되기까지 대기시간. 1/1000단위, -1일 경우 무한대기.
 		minEvictableIdleTimeMillis : 사용되지 않은 커넥션을 추출할 때, 이 속성에서 지정한 시간이상 비활성화 상태인 커넥션만 추출한다.
-		                                 양수가 아닌 경우 비활성화된 시간으로는 풀에서 제거되지 않는다.
-		timeBetweenEvictionRunsMillis : 사용되지 않은 커넥션을 추출하는 쓰레드의 실행주기를 설정. 양수가 아닌 경우 실행되지 않음
-		numTestsPerEvictionRun : 사용되지 않은 커넥션을 몇 개 검사할지 지정
+		                                 양수가 아닌 경우 비활성화된 시간으로는 풀에서 제거되지 않는다. (추천 : 1800000)
+		timeBetweenEvictionRunsMillis : 사용되지 않은 커넥션을 추출하는 쓰레드의 실행주기를 설정. 양수가 아닌 경우 실행되지 않음(추천 : 1800000)
+		numTestsPerEvictionRun : 사용되지 않은 커넥션을 몇 개 검사할지 지정(추천:3)
 		testOnBorrow : true일 경우, 커넥션 풀에서 커넥션을 가져올 경우, 커넥션이 유효한지 검사
 		testOnReturn : true일 경우, 커넥션 풀에 커넥션을 반환할 때, 커넥션이 유효한지 검사
 		testWhileIdle : true일 경우, 비활성화 커넥션을 추출할 때, 커넥션이 유효한지 검사해서 유효하지 않은 커넥션을 풀에서 제거. 
 	 -->
     <bean id="dataSourceSpied" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<!-- 
 		<property name="driverClassName" value="${jdbc.driverClassName}" />
 		<property name="url" value="${jdbc.url}" />
 		<property name="username" value="${jdbc.username}" />
 		<property name="password" value="${jdbc.password}" />
+		 -->
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521:xe" />
+		<property name="username" value="xeuser" />
+		<property name="password" value="xeuser" />
 		<property name="maxActive" value="30" />
 		<property name="maxIdle" value="10" />
 		<property name="maxWait" value="1000" />
@@ -52,6 +58,33 @@
     
     <bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
 		<constructor-arg ref="dataSourceSpied" />
+		<property name="logFormatter">
+			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+				<property name="loggingType" value="MULTI_LINE" />
+				<property name="sqlPrefix" value="SQL         :"/>
+			</bean>
+		</property>
+	</bean>
+	
+    <bean id="dataSourceSpied_mapper2" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" >
+		<!-- 
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		 -->
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521:xe" />
+		<property name="username" value="xeuser" />
+		<property name="password" value="xeuser" />
+		<property name="maxActive" value="30" />
+		<property name="maxIdle" value="10" />
+		<property name="maxWait" value="1000" />
+		<property name="defaultAutoCommit" value="false" />
+    </bean>
+    
+    <bean id="dataSource_mapper2" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+		<constructor-arg ref="dataSourceSpied_mapper2" />
 		<property name="logFormatter">
 			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
 				<property name="loggingType" value="MULTI_LINE" />
@@ -109,5 +142,6 @@
 		<jdbc:script location="classpath:schema/insert_player.sql" />	
 	</jdbc:initialize-database>
 	 -->
+	 
 </beans>
  

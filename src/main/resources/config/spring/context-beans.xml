@@ -12,7 +12,7 @@
 	default-autowire="byType">
     
     <context:load-time-weaver/>
-    <context:annotation-config/>
+    <context:annotation-config/> <!-- 모든 pocessor를 한번에 사용할 수 있다. -->
 
     <bean id="appProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="locations">
@@ -116,6 +116,5 @@
     
     <bean id="loginValidator" class="myspring.common.support.LoginValidatorSupport">
     </bean>
-    
     
 </beans>
