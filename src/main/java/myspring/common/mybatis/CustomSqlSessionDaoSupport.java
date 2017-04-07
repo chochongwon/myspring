@@ -211,13 +211,13 @@ public class CustomSqlSessionDaoSupport extends DaoSupport {
             return selectList4PagingGrid(statementName, parameterObject);
         }
         
-        ColumnInjectionResultHandler rowHandler = new ColumnInjectionResultHandler(
+        ColumnInjectionResultHandler resultHandler = new ColumnInjectionResultHandler(
                 ROW_TYPE_COLUMN, RowType.NORMAL.initialLetter,
                 DECRYPT_COULMN, "0",
                 VIRTUAL_COULMN, "N",
                 CHECKBOX_COLUMN, "0");
 
-        return selectList(statementName, parameterObject, rowHandler);
+        return selectList(statementName, parameterObject, resultHandler);
     }
 
     /**

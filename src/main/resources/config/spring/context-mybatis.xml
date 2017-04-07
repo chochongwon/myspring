@@ -92,7 +92,7 @@
         <property name="sqlSession" ref="sqlSession"/>
     </bean>
     -->
-    
+        
     <mybatis:scan base-package="myspring.sample.dao.mapper" factory-ref="sqlSession"  />
     <mybatis:scan base-package="myspring.sample.dao.mapper2" factory-ref="sqlSession_mapper2"  />
     

@@ -15,11 +15,11 @@ public class Board2ServiceImpl implements Board2Service {
     @Autowired
     private Board2DAO board2DAO;
 
-    public Board2VO selectOneBoard2() {
+    public Board2VO selectOneBoard2() throws Exception {
         return (Board2VO)board2DAO.selectOneBoard2();
     }
     
-	public ArrayList<Board2VO> selectListBoard2() {
+	public ArrayList<Board2VO> selectListBoard2() throws Exception {
 		return (ArrayList<Board2VO>)board2DAO.selectListBoard2();
 	}
 }

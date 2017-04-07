@@ -30,8 +30,9 @@ public class DefaultResultHandler implements ResultHandler {
     }
     
 	@Override
-	public void handleResult(ResultContext valueObject) {
-        list.add(valueObject);
+	public void handleResult(ResultContext context) {
+		Object object = context.getResultObject();
+        list.add(object);
 	}
 
 }

@@ -7,6 +7,13 @@
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security-4.2.xsd"
 	id="WebApp_ID" version="3.1">
 
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>	
+	<listener>
+	    <listener-class>myspring.common.util.db.OjdbcDriverRegistrationListener</listener-class>
+	</listener>
 	<!-- spring configLocation 설정 -->
 	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
 	<context-param>  
@@ -33,11 +40,6 @@
 		<param-value>classpath:config/spring/context-*.xml</param-value>
 	</context-param>
     
-	<!-- Creates the Spring Container shared by all Servlets and Filters -->
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>	
-	
 	<!-- Processes application requests -->
 	<!-- DispatcherServlet은 여러개 정의가능하며 load-on-startup의 값이 작은 숫자로 된 DispatcherServlet부터 실행하게 된다. -->	
 	<servlet>

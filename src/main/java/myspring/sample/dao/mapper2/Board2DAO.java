@@ -6,7 +6,7 @@ import myspring.sample.vo.Board2VO;
 
 public interface Board2DAO {
 	
-    Board2VO selectOneBoard2();
+    Board2VO selectOneBoard2() throws Exception;
 
-	List selectListBoard2();
+	List selectListBoard2() throws Exception;
 }

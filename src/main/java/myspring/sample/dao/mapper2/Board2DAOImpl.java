@@ -18,11 +18,11 @@ public class Board2DAOImpl implements Board2DAO {
         this.sqlSessionTemplate = sqlSessionTemplate;
     }
 
-    public Board2VO selectOneBoard2() {
+    public Board2VO selectOneBoard2() throws Exception {
         return (Board2VO) sqlSessionTemplate.selectOne("Board2Service.selectOneBoard2");
     }
     
-    public List selectListBoard2() {
+    public List selectListBoard2() throws Exception {
         return sqlSessionTemplate.selectList("Board2Service.selectListBoard2");
     }
 }

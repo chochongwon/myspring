@@ -40,7 +40,6 @@ public class Board1Controller {
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping(value = "/sample/selectListBoard1.do", method = RequestMethod.GET)
-	@Transactional
 	public ModelAndView selectListBoard1(Locale locale, Model model) throws Exception {
 		logger.info("Welcome selectListBoard1! The client locale is {}.", locale);
 		
@@ -53,7 +52,7 @@ public class Board1Controller {
 		view.addObject("list", list ); // jsp 로 넘길 데이터
 		
 		return view;
-	}	
+	}
 	
 	@RequestMapping(value = "/sample/mapProcedureListBoard1.do")
 	public String mapProcedureListBoard1(Locale locale, Model model) throws Exception {
@@ -104,7 +103,6 @@ public class Board1Controller {
 	}
 	
 	@RequestMapping(value = "/sample/tiles/selectListBoard1Tiles.tiles", method = RequestMethod.GET)
-	@Transactional
 	public ModelAndView selectListBoard1Tiles(Locale locale, Model model) throws Exception {
 		logger.info("Welcome selectListBoard1Tiles! The client locale is {}.", locale);
 		
@@ -120,7 +118,6 @@ public class Board1Controller {
 	}	
 
 	@RequestMapping(value = "/sample/tiles/selectOneBoard1Tiles.tiles", method = RequestMethod.GET)
-	@Transactional
 	public ModelAndView selectOneBoard1Tiles(@RequestParam Integer idx, Model model) throws Exception {
 		logger.info("Welcome selectOneBoard1Tiles! idx="+idx);
 		
@@ -151,12 +148,12 @@ public class Board1Controller {
 	}	
 	
 	@RequestMapping(value = "/sample/tiles/tilesNoMenu.tiles", method = RequestMethod.GET)
-	public String noMenu(Model model) {
+	public String noMenu(Model model) throws Exception {
 	   return "/nomenu/tilesNoMenu/This is NoMenu Title";
 	}
 
 	@RequestMapping(value = "/sample/tiles/tilesDynamic.tiles", method = RequestMethod.GET)
-	public String dynamic(Model model) {
+	public String dynamic(Model model) throws Exception {
 	    return "/dynamic/tilesNoMenu/This is Dynamic Title";
 	}
 
